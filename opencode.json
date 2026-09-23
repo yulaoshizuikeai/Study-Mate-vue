@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "name": "StudyMate-HighSchool",
+  "description": "高中学霸自学系统 (StudyMate High School Edition)",
+  "skills": [
+    "./skills",
+    "~/.config/opencode/skills"
+  ],
+  "commands": {
+    "directory": "./.opencode/commands"
+  },
+  "env": {
+    "STUDYMATE_EDITION": "high-school"
+  }
+}

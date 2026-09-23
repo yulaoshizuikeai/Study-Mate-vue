@@ -1,0 +1,96 @@
+nodes:
+  - id: dynamics.force-analysis
+    title: 规范受力分析
+    kind: 概念
+    objective: 掌握隔离法与整体法，画出规范受力矢量图
+    problem: 如何准确找出物块在粗糙斜面上的所有受力并不漏力、不多力？
+    prerequisites: []
+    concepts:
+      - 隔离法
+      - 正压力与支持力
+      - 静摩擦与滑动摩擦
+    practice: 以讲为主，在课件中掌握四步画图法并完成随堂自测
+    pitfalls:
+      - 凭空添加惯性力或向下滑力
+      - 误将正压力等同于重力
+    realworld: 斜坡汽车驻车、高铁箱体受力平衡
+    过关标准:
+      - 能独立画出倾角为θ的斜面滑块受力矢量分解图
+      - 随堂自测单选题全部答对
+    status: 学习中
+    mastery: 0.5
+
+  - id: dynamics.newton-second-law
+    title: 牛顿第二定律
+    kind: 模型
+    objective: 掌握矢量性与瞬时性，熟练运用正交分解列方程
+    problem: 当合外力突变时，速度和加速度如何瞬间响应？
+    prerequisites:
+      - dynamics.force-analysis
+    concepts:
+      - 瞬时加速度
+      - 弹簧与轻绳模型
+      - 正交分解法
+    practice: 讲练并重，掌握绳断与弹簧突变二级结论
+    pitfalls:
+      - 误认为弹簧弹力能突变
+      - 正交分解未沿加速度方向建系
+    realworld: 电梯超重失重感应、航天器发射过载
+    过关标准:
+      - 能推导轻绳剪断瞬间小球与物块的加速度
+    status: 未开始
+    mastery: 0.0
+
+  - id: dynamics.inclined-plane-slider
+    title: 斜面滑块母题
+    kind: 母题
+    objective: 攻克动力学两类基本问题与临界滑动极值
+    problem: 倾角改变或外力渐变时，静摩擦与滑动摩擦如何转换？
+    prerequisites:
+      - dynamics.newton-second-law
+    concepts:
+      - 动力学两类基本问题
+      - 临界角tanθ=μ
+      - 传送带模型
+    practice: 以练为主，独立拆解两道高考大题变式
+    pitfalls:
+      - 摩擦力方向在达到共速时发生反向未做分段讨论
+    realworld: 机场行李传送带、高山滑雪减速带
+    过关标准:
+      - 正确写出滑块在传送带上的分段运动时间与位移方程
+    status: 未开始
+    mastery: 0.0
+
+  - id: dynamics.experiment-atwood
+    title: 探究加速度实验
+    kind: 实验
+    objective: 掌握控制变量法与平衡摩擦力、消除系统误差
+    problem: 为什么小车总质量必须远大于砂桶总质量？
+    prerequisites:
+      - dynamics.newton-second-law
+    concepts:
+      - 控制变量法
+      - 平衡摩擦力
+      - 逐差法求加速度
+    practice: 以练为主，完成高考实验题专项验收
+    pitfalls:
+      - 平衡摩擦力时挂了小砂桶
+      - 未挂纸带就平衡摩擦力
+    realworld: 汽车碰撞碰撞测试传感器标定
+    过关标准:
+      - 准确指出实验中的两处系统误差与数据处理逐差法列式
+    status: 未开始
+    mastery: 0.0
+
+edges:
+  - from: dynamics.force-analysis
+    to: dynamics.newton-second-law
+    reason: 受力分析是合外力列式的基础
+
+  - from: dynamics.newton-second-law
+    to: dynamics.inclined-plane-slider
+    reason: 掌握牛顿第二定律后进阶综合模型与母题
+
+  - from: dynamics.newton-second-law
+    to: dynamics.experiment-atwood
+    reason: 牛顿第二定律理论推导指导实验设计与误差分析

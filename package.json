@@ -1,0 +1,43 @@
+{
+  "name": "studymate-highschool",
+  "version": "1.0.0",
+  "description": "StudyMate 高中版：你的 AI 高中学霸伴学助手。支持 Google Antigravity、OpenCode 与 DSH 多平台。",
+  "bin": {
+    "studymate": "bin/studymate.mjs"
+  },
+  "exports": {
+    ".": "./bin/dsh-plugin.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "serve": "py -3 scripts/serve.py",
+    "build:home": "py -3 scripts/gen_home.py",
+    "install:antigravity": "powershell -ExecutionPolicy Bypass -File ./install-antigravity.ps1",
+    "install:opencode": "powershell -ExecutionPolicy Bypass -File ./install-opencode.ps1",
+    "install:dsh": "powershell -ExecutionPolicy Bypass -File ./install.ps1"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "license": "MIT",
+  "author": "Cattofu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Miaotofu01/Study-Mate.git"
+  },
+  "homepage": "https://github.com/Miaotofu01/Study-Mate#readme",
+  "bugs": {
+    "url": "https://github.com/Miaotofu01/Study-Mate/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "studymate",
+    "learning",
+    "education"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

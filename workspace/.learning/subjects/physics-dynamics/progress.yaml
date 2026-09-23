@@ -1,0 +1,7 @@
+nodes:
+  dynamics.force-analysis:
+    status: 学习中
+    mastery: 0.5
+misconceptions: []
+project:
+  current: "掌握基本动力学分析，独立完成高考母题拆解"
