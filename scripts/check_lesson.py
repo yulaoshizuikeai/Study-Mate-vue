@@ -79,7 +79,11 @@ import os
 import re
 import sys
 from html.parser import HTMLParser
-from urllib.parse import unquote
+if sys.platform == 'win32':
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 try:
     import yaml

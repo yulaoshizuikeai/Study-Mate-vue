@@ -11,6 +11,12 @@
 <link rel="stylesheet" href="../../assets/sayo/sayo.css">
 <link rel="stylesheet" href="../../assets/learn-theme.css">
 
+<!-- KaTeX 数学物理公式支持 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+
 <!-- 主题：首帧前应用已保存的主题（共享逻辑在 ../../assets/learn-theme.js，
      暗色是默认（Sayo 的 Primer 暗色），亮色=我们的暖色系；URL 加 ?theme=light 可临时预览） -->
 <script src="../../assets/learn-theme.js"></script>
@@ -840,9 +846,11 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
     try { localStorage.setItem(OPEN_KEY, JSON.stringify(Object.keys(openSet))); } catch (e) {}
   }
 
+  var hasStoredOpen = localStorage.getItem(OPEN_KEY) !== null;
   Array.prototype.forEach.call(document.querySelectorAll('details.learn-slot'), function (slot) {
     var id = slot.dataset.id || '';
-    if (id && openSet[id]) slot.open = true;
+    var isCurrent = !!slot.querySelector('.learn-node__now');
+    if (id && (openSet[id] || (!hasStoredOpen && isCurrent))) slot.open = true;
 
     slot.addEventListener('toggle', function () {
       if (!id) return;

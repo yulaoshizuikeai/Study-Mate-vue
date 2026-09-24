@@ -353,6 +353,22 @@ def ensure_shared_assets(ws):
         shutil.copy2(path, os.path.join(dst, name))
 
 
+def ensure_subject_assets(subject_dir):
+    """确保科目目录下有 assets/ 及其课件层组件（style.css, quiz.js, lesson-toc.js）。
+    自动同步模板源文件，确保课件子页面样式与交互始终有效。
+    """
+    src = os.path.join(TEMPLATES, 'assets')
+    dst = os.path.join(subject_dir, 'assets')
+    os.makedirs(dst, exist_ok=True)
+    for name in ('style.css', 'quiz.js', 'lesson-toc.js'):
+        src_path = os.path.join(src, name)
+        dst_path = os.path.join(dst, name)
+        if os.path.isfile(src_path):
+            shutil.copy2(src_path, dst_path)
+    # 图片库目录结构
+    os.makedirs(os.path.join(dst, 'img', 'pool'), exist_ok=True)
+
+
 # ══════════════════════════════════════════════════════════════════
 # 占位符替换（区块级整行替换 / 字段级全替换；缺失即报错退出）
 # ══════════════════════════════════════════════════════════════════
@@ -1006,8 +1022,10 @@ def main(argv):
     for item in summaries:
         slug = item['slug']
         try:
-            cur = load_yaml_quiet(os.path.join(subjects_dir, slug, 'curriculum.yaml'), f'{slug}/curriculum.yaml')
-            prog = load_yaml_quiet(os.path.join(subjects_dir, slug, 'progress.yaml'), f'{slug}/progress.yaml')
+            subject_dir = os.path.join(subjects_dir, slug)
+            ensure_subject_assets(subject_dir)
+            cur = load_yaml_quiet(os.path.join(subject_dir, 'curriculum.yaml'), f'{slug}/curriculum.yaml')
+            prog = load_yaml_quiet(os.path.join(subject_dir, 'progress.yaml'), f'{slug}/progress.yaml')
             render_subject_index(slug, cur, prog, ws)
             pages += 1
             written.append(os.path.join(subjects_dir, slug, 'index.html'))

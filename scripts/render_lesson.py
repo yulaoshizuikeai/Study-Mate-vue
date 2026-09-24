@@ -1346,6 +1346,7 @@ def main(argv):
         return 0
     with open(out_path, 'w', encoding='utf-8', newline='\n') as handle:
         handle.write(page)
+    gen_home.ensure_subject_assets(subject_dir)
     print(f'OK   {out_path}')
     return 0
 

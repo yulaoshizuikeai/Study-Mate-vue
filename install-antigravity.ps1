@@ -1,4 +1,4 @@
-﻿# StudyMate-HighSchool (高中版) - Google Antigravity 一键安装注册脚本 (PowerShell)
+# StudyMate-HighSchool (高中版) - Google Antigravity 一键安装注册脚本 (PowerShell)
 # 作用：将高中自学套件与 Skills 注册到 Antigravity 全局环境与当前工作区
 param(
     [string]$Workspace = ""
@@ -76,6 +76,9 @@ Get-ChildItem -LiteralPath $SkillsSrc -Directory | ForEach-Object {
     if (-not (Test-Path $dest)) { New-Item -ItemType Directory -Path $dest -Force | Out-Null }
     Copy-Item (Join-Path $_.FullName "*") $dest -Recurse -Force
 }
+
+# 6. 生成并校验所有主页与课件资源
+& py -3 (Join-Path $Root "scripts\gen_home.py") $Workspace | Out-Null
 
 Write-Host "✅ 学习工作区已就绪: $Workspace" -ForegroundColor Green
 Write-Host "==========================================================" -ForegroundColor Cyan
