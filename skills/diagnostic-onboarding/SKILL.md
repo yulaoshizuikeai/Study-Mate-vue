@@ -43,4 +43,4 @@ argument-hint: "你想诊断哪个考点或模块？例如：牛顿运动定律�
 
 1. 更新 `workspace/.learning/subjects/<科目>/curriculum.yaml`；
 2. 更新 `workspace/.learning/profile.yaml` 中的 `priorities` 与 `weakness_tags`；
-3. 执行 `py -3 scripts/gen_home.py` 刷新路线图网页展示。
+3. 执行 `npm run sync` 刷新路线图与 VitePress 看板展示。

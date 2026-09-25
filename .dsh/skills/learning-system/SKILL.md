@@ -1,7 +1,7 @@
 ---
 name: learning-system
-description: StudyMate 总控：开场读工作区配置（~/.dsh/studymate-config.yaml）恢复共享记忆与科目、路由到角色子 agent、维护学习工作区状态。可在任意目录开会话，加载本 skill 进入学习模式。
-argument-hint: "你想学什么？或继续上次的科目"
+description: 高中自学教练总控与知识库引擎。当用户想要自学高中物理、数学、化学，要求讲授高中考点、设计学科大纲路线图、开展学习测评与出题、或者提到“进入学习模式”、“我要学物理/数学/化学”时触发。负责调度大纲设计、课件渲染、四层做题核验与主页刷新。
+argument-hint: "你想学哪个科目或考点？例如：高中物理动力学、受力平衡"
 ---
 
 # 学习系统总控
@@ -73,11 +73,11 @@ argument-hint: "你想学什么？或继续上次的科目"
    - **第二段 · 再出题**：派 `practice-evaluator`（**时机一 · 出题**；值：`subject_path` + 节点 id + 内容文件的绝对路径 + 载体）
    - **你搬入**：`cp -r /tmp/practice-evaluator-<节点id>/deliver/. <subject_path>/`——`deliver/` 里的相对路径与正式位置一一对应（题库落成 `lessons/<序号>-<节点id>.quiz.json`），**题面与答案一个字都不改**（`cp` 天然不改；**别读进来再写出来**）。它交回的 `empty_reason` 攒成 TSV（`锚点<TAB>理由`）后跑 `python3 <root>/scripts/apply_empty_reasons.py <subject_path> <节点id> <tsv>` 打进内容文件（**别手工开内容文件改**），除此之外内容文件一个字不动
    - **自查 lab 交付态**：写完自查**载体对应的测试命令**（`npm test`／`make test`／`./run_tests.sh`…）的交付态：**参考解全绿、任务/留白态非零退出**（学生还没开始做时那套必须是不通过的）
-   - **你渲染**：`python3 <root>/scripts/render_lesson.py <subject_path> <节点id>` 出 `lessons/<序号>-<节点id>.html`。它逐行报问题（`<文件>:<行> <问题>`）：内容文件的错**按 `<文件>:<行>` 打回** `learning-coach`，题库与锚点对不上的打回 `practice-evaluator`，改完重渲
-3. **实验课 · 一次出材料**：派 `practice-evaluator`（**时机一 · 实验任务**；值：`subject_path` + 节点 id + **被验收节点 id** + 项目目标）→ **你搬入**：`cp` 说明页到 `lessons/<序号>-<节点id>.md`、任务树到 `lab/NNNN-…/`（原样搬，缺东西打回出题人补，你不代写、也不转抄）；然后**跟概念课同一条路**：你跑渲染器出页面、按第 4 步过检查，最后自查任务可跑
-4. **过检查**（渲染写过盘之后跑）：`python3 <root>/scripts/check_lesson.py <页面路径> --subject <subject_path> --node <节点id>`（按 `kind` 判 lab 要求）；`FAIL` 按归属打回（题目、lab 与实验说明页内容 → `practice-evaluator`；概念课/实操课的内容文件、版式、引用、lab 链接 → `learning-coach`），`WARN` 自己心里有数。通过后**两步缺一不可**：
-   - **回复里给出可点的页面**：`present` 呈上页面 + 文字写明**绝对路径**（`xdg-open` 可能失败，链接才是一定拿得到页面的路）；实操课与实验课顺带给 `lab/NNNN-…` 路径
-   - 再 `xdg-open` / `open` 作补充，并按「对话节奏」给下一步
+   - **你同步**：运行 `npm run sync` 将课件与题库同步合入 VitePress 并自动挂载 `<QuizCard>` / `<StepScoreCard>`，学生可在 `http://localhost:5173/` 实时交互自测。
+3. **实验课 · 一次出材料**：派 `practice-evaluator`（**时机一 · 实验任务**；值：`subject_path` + 节点 id + **被验收节点 id** + 项目目标）→ **你搬入**：`cp` 说明页到 `lessons/<序号>-<节点id>.md`、任务树到 `lab/NNNN-…/`（原样搬，缺东西打回出题人补，你不代写、也不转抄）；然后**跟概念课同一条路**：跑 `npm run sync` 同步至 VitePress 并自查任务可跑
+4. **过检查**（同步后）：`python3 <root>/scripts/check_lesson.py <课件.md> --subject <subject_path> --node <节点id>`（按 `kind` 判要求）；`FAIL` 按归属打回，`WARN` 自己心里有数。通过后**两步缺一不可**：
+   - **回复里给出可点的页面**：呈上链接 `http://localhost:5173/subjects/<subject>/lessons/<node>`；
+   - 再按「对话节奏」给下一步。
 5. 学生说"学完了" → **只在评估点派** `practice-evaluator`（**时机二 · 评估**；值：`subject_path` + 节点 id + **作答原文（逐字转发，不许摘要——摘要会污染证据核验）**）。**评估点是**：① `kind: 实验` 的课（它本来就是验收）；② 每走完 3-5 个普通节点的一次阶段评估；③ 学生自己要求"考考我"。**不是评估点就别派**——你按"读完了 + 页内自测做了 + 实操断言全绿"给一个保守的进度更新（状态最多到「初步理解」，掌握度按实操实测估），直接进下一节点
 6. 按结论分支：
    - 通过 → 你更新 `progress.yaml`（掌握度、状态"能独立应用"、misconceptions）+ 写评估记录 + 写一条学习记录；**实验课通过时按 `record-keeping` 置位**（它自己与 `prerequisites` 里的被验收节点）；阶段评估通过时，**把这一阶段的节点一起提到「能独立应用」**
@@ -150,9 +150,9 @@ argument-hint: "你想学什么？或继续上次的科目"
 ### 交接与返回
 
 - **上游产出给路径，不转述**：锚点在内容文件、`过关标准` 在大纲、题目在 `.quiz.json`、资源在 `RESOURCES.md`——派工时给**绝对路径 + 节点 id**，让下游自己读；**别贴全文、也别凭记忆转述**（只有你自己生成的摘要——盘问结果、前置节点摘要——才写进 brief）
-- **搬运用 shell，不转抄**：产物由产出者落 `deliver/`，你只做三件事——`cp` 搬到位、跑校验器（`check_curriculum.py`／`check_pool.py`／`render_lesson.py`／`check_lesson.py`）、读角色给的**摘要**。**一份产物只该经过它的作者的手**：你读进来看的是清单与结论，不是内容本身
-- **对位靠锚点，不靠序号**：`::: quiz` 的锚点文本是内容文件与题库之间的唯一接头——讲解写、出题人自己从内容文件的 `::: quiz` 行读（**你不转述**）、渲染器按它取题；序号对位在不一致时会**静默错位**
-- **「位 ↔ 题」交给检查，你别手工核**：锚点无题缺 `empty_reason:`、题库孤儿键、同一锚点两个题目位置——这三类对账都是 `render_lesson.py`／`check_lesson.py` 带行号的确定性报错，逐个手比是重复劳动；报错时按归属打回（内容 → `learning-coach`，题库与锚点 → `practice-evaluator`）。题目位置与题量怎么配见 `layered-practice` 第七节
+- **搬运用 shell，不转抄**：产物由产出者落 `deliver/`，你只做三件事——`cp` 搬到位、跑校验器（`check_curriculum.py`／`check_pool.py`／`sync_to_vitepress.py`／`check_lesson.py`）、读角色给的**摘要**。**一份产物只该经过它的作者的手**：你读进来看的是清单与结论，不是内容本身
+- **对位靠锚点，不靠序号**：`::: quiz` 的锚点文本是内容文件与题库之间的唯一接头——讲解写、出题人自己从内容文件的 `::: quiz` 行读（**你不转述**）、同步脚本按它取题；序号对位在不一致时会**静默错位**
+- **「位 ↔ 题」交给检查，你别手工核**：锚点无题缺 `empty_reason:`、题库孤儿键、同一锚点两个题目位置——这三类对账由 `sync_to_vitepress.py`／`check_lesson.py` 自动化核验；报错时按归属打回（内容 → `learning-coach`，题库与锚点 → `practice-evaluator`）。
 - **同一科目同时只有一个写入者**：并行只允许"不写同一个文件"的两支（现有并行段就是：`image-scout` 写图片库与 `pool.md`、`curriculum-designer` 只回内容）；上一支没回来别派下一支
 - **验收不过就退回给产出它的那个子 agent 自己改**（`send_message` 带上失败的原文证据；别自己代改，也别另派新 agent）
 
@@ -161,4 +161,4 @@ argument-hint: "你想学什么？或继续上次的科目"
 - 学生要跳过节点时先记一笔"跳过原因"再放行
 - 单会话推进 1-2 个节点；会话变长时主动建议"今天就到这"
 - 跨科目只在 `MEMORY.md` 层面共享，科目文件不互相引用
-- 刷新主页：`python3 <root>/scripts/gen_home.py`（一次刷新根主页与所有科目主页）
+- 刷新主页：执行 `npm run sync`（自动刷新 VitePress 根主页、科目页与数据源）

@@ -37,7 +37,7 @@ argument-hint: "你想学哪个知识点？例如：受力平衡、传送带模�
 
 5. **成果落盘与 Web 课件同步（学习过程可视化）**：
    - 教学内容自动同步归档到本地工作区（默认 `StudyMate-HighSchool/workspace/.learning/subjects/<科目>/`）。
-   - 生成的标准课件 markdown（含 SVG 嵌入、KaTeX 公式与 `::: scaffold` 折叠卡）通过 `scripts/render_lesson.py` 渲染为精美网页，让学生在浏览器（`http://localhost:3000/`）中随时回看和刷题。
+   - 生成的标准课件 markdown（含 SVG 嵌入、KaTeX 公式与 `::: scaffold` 折叠卡）通过 `npm run sync` 自动同步并热加载至 VitePress 学习站，让学生在浏览器（`http://localhost:5173/`）中随时回看和刷题。
 
 ---
 
@@ -62,10 +62,9 @@ argument-hint: "你想学哪个知识点？例如：受力平衡、传送带模�
 
 ### 场景 C：离线课件与知识库建设
 当用户要求“生成整章大纲”或“把这节课落成网页”时：
-1. 遵循 `lesson-design` 与 `curriculum.schema.json` 规则编写课程文件。
-2. 调用 Python 脚本渲染为 HTML 课件并刷新主页：
+1. 遵循 `lesson-design` 与 `curriculum.schema.json` 规则编写课程文件（`.md` + `.quiz.json`）。
+2. 执行一键同步脚本更新 VitePress 知识库并刷新看板：
    ```powershell
-   py -3 scripts/render_lesson.py <subject_dir> <node_id>
-   py -3 scripts/gen_home.py <workspace_dir>
+   npm run sync
    ```
-3. 提示用户访问本地预览页面（如 `http://localhost:3000/`）查看成果。
+3. 提示用户访问本地伴学站（`http://localhost:5173/`）查看交互成果。

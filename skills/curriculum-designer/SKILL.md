@@ -24,7 +24,7 @@ user-invocable: false
 | ❌ 别用：学科定义 + 发展史 + 本课结构 | 国内不少工科教材的绪论 | 锚在学科自己身上，读者没有对应经验，最常被跳过 |
 
 
-3. 每个节点写全这些字段（大纲主页卡片只显示 `title` + `objective`，`gen_home.py` 超了会在 stderr 提醒）：
+3. 每个节点写全这些字段（大纲主页卡片只显示 `title` + `objective`，`sync_to_vitepress.py` 超了会在终端提醒）：
 
 | 字段 | 要求 |
 |---|---|

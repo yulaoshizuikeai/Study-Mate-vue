@@ -35,11 +35,9 @@ argument-hint: "你想学哪个知识点？例如：受力平衡、传送带模�
    - **L3 排错层**：呈现典型学生错解，让学生抓出错误逻辑。
    - **L4 应用/综合层**：经典高考母题或压轴拆解，在题库中给出分步采分细则（`criteria`），指导学生在网页草稿台进行 5 步踩分自测，错题自动归入四大错因（审题/概念/模型/计算）并沉淀至 `misconceptions.yaml`。
 
-5. **成果落盘与 VitePress 现代化伴学端（硬性工作流）**：
-   - **会话开场与服务**：伴学端基于 **VitePress 极速热更新服务**（默认端口 5173）。若未运行，建议以后台任务运行 `npm run dev`；
-   - 教学内容自动同步归档到本地工作区（默认 `StudyMate-HighSchool/workspace/.learning/subjects/<科目>/`）；
-   - **一键同步与构建**：课件生成或更新后，执行 `npm run sync`（即 `py -3 scripts/sync_to_vitepress.py`），脚本将自动把工作区课件转译并生成到 `site/` 目录下，并自动刷新导航栏与考纲侧边栏；
-   - 生成的课件原生支持 KaTeX 公式、`<SvgViewer>` / `::: svg` 高清矢量图解、`<QuizCard>` 随堂即时判定与认知归因自评，以及 `<StepScoreCard>` 高考大题采分自测。学生在浏览器（`http://localhost:5173/`）中享受丝滑的现代化自学体验。
+5. **成果落盘与 Web 课件同步（学习过程可视化）**：
+   - 教学内容自动同步归档到本地工作区（默认 `StudyMate-HighSchool/workspace/.learning/subjects/<科目>/`）。
+   - 生成的标准课件 markdown（含 SVG 嵌入、KaTeX 公式与 `::: scaffold` 折叠卡）通过 `npm run sync` 自动同步并热加载至 VitePress 学习站，让学生在浏览器（`http://localhost:5173/`）中随时回看和刷题。
 
 ---
 
@@ -64,9 +62,9 @@ argument-hint: "你想学哪个知识点？例如：受力平衡、传送带模�
 
 ### 场景 C：离线课件与知识库建设
 当用户要求“生成整章大纲”或“把这节课落成网页”时：
-1. 遵循 `lesson-design` 与 `curriculum.schema.json` 规则编写课程文件。
-2. 落盘后运行同步指令，自动更新 VitePress 站点与侧边栏：
+1. 遵循 `lesson-design` 与 `curriculum.schema.json` 规则编写课程文件（`.md` + `.quiz.json`）。
+2. 执行一键同步脚本更新 VitePress 知识库并刷新看板：
    ```powershell
    npm run sync
    ```
-3. 提示用户访问本地伴学平台（`http://localhost:5173/`）查看并沉浸式刷题。
+3. 提示用户访问本地伴学站（`http://localhost:5173/`）查看交互成果。
