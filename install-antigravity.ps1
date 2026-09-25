@@ -77,8 +77,8 @@ Get-ChildItem -LiteralPath $SkillsSrc -Directory | ForEach-Object {
     Copy-Item (Join-Path $_.FullName "*") $dest -Recurse -Force
 }
 
-# 6. 生成并校验所有主页与课件资源
-& py -3 (Join-Path $Root "scripts\gen_home.py") $Workspace | Out-Null
+# 6. 同步考纲与课件至 VitePress 站点
+& py -3 (Join-Path $Root "scripts\sync_to_vitepress.py") | Out-Null
 
 Write-Host "✅ 学习工作区已就绪: $Workspace" -ForegroundColor Green
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -86,5 +86,5 @@ Write-Host "🎉 安装完成！在 Antigravity 中开启高中自学的方式�
 Write-Host "👉 在当前或任意 Antigravity 对话框中直接说：" -ForegroundColor White
 Write-Host "   『我想学高中物理动力学』 或 『考考我牛顿运动定律』" -ForegroundColor White
 Write-Host "👉 运行本地离线 Web 知识库看板：" -ForegroundColor White
-Write-Host "   npm run serve  (自动在浏览器打开路线图与课件)" -ForegroundColor White
+Write-Host "   npm run dev  (自动在浏览器打开路线图与课件)" -ForegroundColor White
 Write-Host "==========================================================" -ForegroundColor Cyan

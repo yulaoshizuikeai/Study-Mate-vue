@@ -123,6 +123,7 @@ $$\mu mg \cos\theta = mg \sin\theta \implies \tan\theta = \mu$$
 ### 第一层：概念辨析单选题
 
 <QuizCard
+  id="physics-01-force-analysis-quiz"
   question="一个物块静止在倾角为 θ 的粗糙固定斜面上，关于它的受力情况，下列分析正确的是？"
   :options="[
     '物块受重力、支持力、静摩擦力三个力作用',
@@ -141,6 +142,7 @@ $$\mu mg \cos\theta = mg \sin\theta \implies \tan\theta = \mu$$
 ### 第二层：高考真题大题分步踩分自测
 
 <StepScoreCard
+  id="physics-01-force-analysis-step"
   :criteria="[
     { desc: '垂直斜面受力平衡列式：F_N = mg cos37°', points: 2 },
     { desc: '滑动摩擦力公式：f = μ F_N = 8N（标明方向沿斜面向下）', points: 2 },

@@ -187,16 +187,23 @@ def main():
     check('重复跑沿用已有工作区（没有被重置回 <root>/workspace）',
           same_path(config_of(home)['workspace'], os.path.join(tmp, 'ws')), config_of(home))
 
-    # ③ 首课流程要用的：工作区能生成主页（用沙箱配置，不碰真实 ~/.dsh）
+    # ③ 首课流程要用的：工作区与站点能成功同步总览数据
     env = dict(os.environ, HOME=home, DSH_HOME=os.path.join(home, '.dsh'), PYTHONUTF8='1')
-    gen = subprocess.run([sys.executable, str(REPO / 'scripts' / 'gen_home.py')], env=env,
-                         capture_output=True, text=True, encoding='utf-8', errors='replace')
-    check('装完能跑 gen_home 生成空状态主页', gen.returncode == 0, (gen.stdout or '') + (gen.stderr or ''))
-
-    check('根主页与共享层就位（含抬头看板娘）',
-          os.path.isfile(os.path.join(tmp, 'ws', 'index.html')) and
-          os.path.isdir(os.path.join(tmp, 'ws', '.learning', 'assets', 'sayo')) and
-          os.path.isfile(os.path.join(tmp, 'ws', '.learning', 'assets', 'learn-mascot.png')))
+    if (REPO / 'scripts' / 'gen_home.py').is_file():
+        gen = subprocess.run([sys.executable, str(REPO / 'scripts' / 'gen_home.py')], env=env,
+                             capture_output=True, text=True, encoding='utf-8', errors='replace')
+        check('装完能跑 gen_home 生成空状态主页', gen.returncode == 0, (gen.stdout or '') + (gen.stderr or ''))
+        check('根主页与共享层就位（含抬头看板娘）',
+              os.path.isfile(os.path.join(tmp, 'ws', 'index.html')) and
+              os.path.isdir(os.path.join(tmp, 'ws', '.learning', 'assets', 'sayo')) and
+              os.path.isfile(os.path.join(tmp, 'ws', '.learning', 'assets', 'learn-mascot.png')))
+    else:
+        sync_script = REPO / 'scripts' / 'sync_to_vitepress.py'
+        gen = subprocess.run([sys.executable, str(sync_script)], env=env,
+                             capture_output=True, text=True, encoding='utf-8', errors='replace')
+        check('装完能跑同步脚本生成总览数据', gen.returncode == 0, (gen.stdout or '') + (gen.stderr or ''))
+        check('根主页与站点数据就位',
+              os.path.isfile(REPO / 'site' / '.vitepress' / 'theme' / 'curriculum-data.json'))
 
     # ④ 路径写法：~ 展开、相对路径变绝对（配置是机器全局的，留相对路径就找不到工作区）
     proc = run(home, workspace='~/tilde')

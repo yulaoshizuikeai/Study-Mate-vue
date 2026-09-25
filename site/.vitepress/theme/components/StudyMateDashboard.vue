@@ -4,7 +4,7 @@
     <header class="sm-hero">
       <div class="sm-hero__brand-row">
         <div class="sm-hero__left">
-          <img class="sm-hero__mascot" src="/learn-mascot.png" alt="StudyMate Mascot" />
+          <img class="sm-hero__mascot" src="/learn-mascot.png" alt="StudyMate Mascot" width="76" height="50" />
           <div class="sm-hero__titles">
             <div class="sm-hero__brand">StudyMate</div>
             <div class="sm-hero__tagline">高中全科智能自学工作区</div>
@@ -37,6 +37,10 @@
       <div class="sm-stat-box">
         <span class="sm-stat-value">{{ learningNodesCount }}</span>
         <span class="sm-stat-label">进行中节点</span>
+      </div>
+      <div class="sm-stat-box">
+        <span class="sm-stat-value text-brand">{{ practiceCount }} <small style="font-size:0.8rem; font-weight:normal;">题</small></span>
+        <span class="sm-stat-label">已练自测题</span>
       </div>
       <div class="sm-stat-box">
         <span class="sm-stat-value">{{ avgMastery }}%</span>
@@ -108,21 +112,14 @@
         <p class="sm-radar__desc">根据认知遗忘曲线，今日扫描到 <b>{{ dueMistakesCount }}</b> 道需巩固错题：</p>
 
         <div class="sm-taxonomy-chips">
-          <div class="taxo-chip">
-            <span class="taxo-label">审题遗漏</span>
-            <span class="taxo-num">0</span>
-          </div>
-          <div class="taxo-chip has-due">
-            <span class="taxo-label">概念混淆</span>
-            <span class="taxo-num">1</span>
-          </div>
-          <div class="taxo-chip">
-            <span class="taxo-label">模型套错</span>
-            <span class="taxo-num">0</span>
-          </div>
-          <div class="taxo-chip">
-            <span class="taxo-label">计算失误</span>
-            <span class="taxo-num">0</span>
+          <div 
+            v-for="(count, tax) in taxonomyCounts" 
+            :key="tax" 
+            class="taxo-chip"
+            :class="{ 'has-due': count > 0 }"
+          >
+            <span class="taxo-label">{{ tax }}</span>
+            <span class="taxo-num">{{ count }}</span>
           </div>
         </div>
 
@@ -287,14 +284,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import rawData from '../curriculum-data.json'
+import { getAllRecords, onPracticeUpdated } from '../utils/practiceStorage'
 
 // 真实学情数据与全量学习节点：直接从同步生成的 curriculum-data.json 动态加载
 // 任何学科新建、节点增删改，只需执行 npm run sync 即可全自动响应式更新并保持样式
 const profile = ref(rawData.profile)
-const dueMistakesCount = ref(rawData.dueMistakesCount || 1)
+const dueMistakesCount = ref(rawData.dueMistakesCount ?? 0)
+const taxonomyCounts = ref(rawData.taxonomyCounts || {
+  '审题遗漏': 0,
+  '概念混淆': 1,
+  '模型套错': 0,
+  '计算失误': 0
+})
 const subjects = ref(rawData.subjects || [])
+const practiceCount = ref(0)
+
+function refreshPracticeStats() {
+  const records = getAllRecords()
+  let count = 0
+  for (const key in records) {
+    const r = records[key]
+    if (r.type === 'quiz' && r.selected !== null) {
+      count++
+    } else if (r.type === 'step' && r.checkedItems && r.checkedItems.length > 0) {
+      count++
+    }
+  }
+  practiceCount.value = count
+}
+
+let unlistenPractice: (() => void) | null = null
+
+onMounted(() => {
+  refreshPracticeStats()
+  unlistenPractice = onPracticeUpdated(() => {
+    refreshPracticeStats()
+  })
+})
+
+onUnmounted(() => {
+  if (unlistenPractice) {
+    unlistenPractice()
+  }
+})
 
 const activeFilter = ref<'all' | 'ongoing' | 'done'>('all')
 const searchQuery = ref('')
@@ -376,10 +410,17 @@ function triggerDiagnostic() {
 }
 
 .sm-hero__mascot {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  width: 76px;
+  height: auto;
+  aspect-ratio: 640 / 425;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(2, 132, 199, 0.08));
+  transition: transform 0.25s ease;
+}
+
+.sm-hero__mascot:hover {
+  transform: translateY(-2px) scale(1.03);
 }
 
 .sm-hero__titles {
@@ -444,12 +485,21 @@ function triggerDiagnostic() {
 /* 核心指标状态栏 */
 .sm-stats-strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
   margin-bottom: 1.75rem;
 }
 
+@media (max-width: 960px) {
+  .sm-stats-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
+  .sm-hero__mascot {
+    width: 62px;
+  }
   .sm-stats-strip {
     grid-template-columns: repeat(2, 1fr);
   }

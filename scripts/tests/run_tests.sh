@@ -15,28 +15,34 @@ step() {
   "$@" || { fail=1; printf '  ↑ 这一套没全过\n'; }
 }
 
-if ! python3 -c 'import yaml' 2>/dev/null; then
-  printf '\n缺少 pyyaml：检查读不了 curriculum.yaml（命名与指针那套会失败），\n'
-  printf '渲染器也读不了大纲（课件渲染那套会失败）。\n'
-  printf '先装：python3 -m pip install pyyaml\n'
+PYTHON=""
+if command -v py >/dev/null 2>&1 && py -3 -c 'import yaml' 2>/dev/null; then
+  PYTHON="py -3"
+elif command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' 2>/dev/null; then
+  PYTHON="python3"
+elif command -v python >/dev/null 2>&1 && python -c 'import yaml' 2>/dev/null; then
+  PYTHON="python"
+fi
+
+if [ -z "$PYTHON" ]; then
+  printf '\n缺少 pyyaml：检查读不了 curriculum.yaml（命名与指针那套会失败）。\n'
+  printf '先装：python3 -m pip install pyyaml 或 py -3 -m pip install pyyaml\n'
   exit 1
 fi
 
-step '安装脚本（沙箱 HOME，30 项）'        python3 scripts/tests/test_install.py
-step '题目属性转义（检查，9 例）'          python3 scripts/tests/test_quiz_attr.py
-step '题目里的代码围栏（检查，12 例）'     python3 scripts/tests/test_quiz_code.py
-step '课件配图（检查，5 例）'              python3 scripts/tests/test_lesson_figure.py
-step '命名与上下节课指针（检查，9 例）'    python3 scripts/tests/test_naming_nav.py
-step '图片库索引（校验器，6 例）'            python3 scripts/tests/test_pool.py
-step '位次重排与 empty_reason（脚本，22 例）'  python3 scripts/tests/test_lesson_scripts.py
-step '课件渲染（渲染器，26 例）'           python3 scripts/tests/test_render_lesson.py
-step '提示词规则清单（417 条）'            python3 scripts/tests/test_skill_rules.py
+step '安装脚本（沙箱 HOME，39 项）'        $PYTHON scripts/tests/test_install.py
+step '题目属性转义（检查，9 例）'          $PYTHON scripts/tests/test_quiz_attr.py
+step '题目里的代码围栏（检查，12 例）'     $PYTHON scripts/tests/test_quiz_code.py
+step '课件配图（检查，5 例）'              $PYTHON scripts/tests/test_lesson_figure.py
+step '命名与上下节课指针（检查，9 例）'    $PYTHON scripts/tests/test_naming_nav.py
+step '图片库索引（校验器，6 例）'            $PYTHON scripts/tests/test_pool.py
+step '位次重排与 empty_reason（脚本，22 例）'  $PYTHON scripts/tests/test_lesson_scripts.py
+step '提示词规则清单（408 条）'            $PYTHON scripts/tests/test_skill_rules.py
 
-if command -v node >/dev/null 2>&1; then
-  step 'quiz.js 渲染（33 项）'             node scripts/tests/quiz_dom_test.js
-  step 'lesson-toc.js 侧栏（33 项）'       node scripts/tests/toc_dom_test.js
+if command -v npm >/dev/null 2>&1; then
+  step 'VitePress 同步与构建（全站热编译）' npm run build
 else
-  printf '\n跳过两套 JS 测试：没装 node。\n'
+  printf '\n跳过 VitePress 构建测试：没装 npm。\n'
 fi
 
 if [ "$BROWSER" = 1 ]; then

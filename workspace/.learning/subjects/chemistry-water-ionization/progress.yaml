@@ -1,9 +1,13 @@
-updated_at: "2026-09-24T17:45:00+08:00"
+updated_at: "2026-09-25T11:23:00+08:00"
 nodes:
   water.ionization-kw:
+    status: 已完成
+    mastery: 1.0
+    notes: 成功掌握自偶电离、Kw温度决定性与中性本质（c(H+)=c(OH-)）
+  water.equilibrium-shift:
     status: 学习中
-    mastery: 0.2
-    notes: 开启第一课概念学习
+    mastery: 0.3
+    notes: 正在攻克酸碱盐对水电离影响及离子浓度计算四大黄金模型
 misconceptions: []
 project:
   current: 水的电离平衡微观图景与高考题型突破

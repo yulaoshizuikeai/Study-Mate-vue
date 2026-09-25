@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import json
+import datetime
 import yaml
 
 if sys.platform == 'win32':
@@ -26,48 +27,107 @@ def sanitize_filename(name: str) -> str:
     return clean
 
 
+def parse_criteria(crit_text: str) -> list:
+    """解析高考大题采分点文本为结构化数据"""
+    items = []
+    if not crit_text:
+        return items
+    for line in crit_text.splitlines():
+        line = line.strip()
+        if not line or line.startswith('【'):
+            continue
+        m = re.search(r'([（(]?(?:得|\+)?\s*(\d+)\s*分[)）]?)', line)
+        points = int(m.group(2)) if m else 1
+        desc = re.sub(r'^[①②③④⑤⑥⑦⑧⑨⑩\d\.\s、-]+', '', line).strip()
+        if m:
+            desc = desc.replace(m.group(1), '').strip().rstrip('；;。，,')
+        if desc:
+            items.append({'desc': desc, 'points': points})
+    return items
+
+
 def transform_markdown(md_content: str, quiz_data: dict = None) -> str:
     """将原版课件语法转换为 VitePress 增强语法"""
-    # 1. 替换 SVG 容器为 SvgViewer 组件
+    # 1. 替换 SVG 容器为 SvgViewer 组件，支持带标题的 ::: svg
     def replace_svg(match):
-        svg_code = match.group(1).strip()
+        title = (match.group(1) or '').strip()
+        svg_code = match.group(2).strip()
+        if title:
+            return f'<SvgViewer title="{title}">\n{svg_code}\n</SvgViewer>'
         return f'<SvgViewer>\n{svg_code}\n</SvgViewer>'
 
-    text = re.sub(r':::\s*svg\s*\n(.*?)\n:::', replace_svg, md_content, flags=re.DOTALL)
+    text = re.sub(r':::\s*svg(?:[ \t]+([^\r\n]+))?[ \t]*\r?\n([\s\S]*?)\r?\n:::', replace_svg, md_content)
 
     # 2. 替换 ::: tip / ::: warn 为 VitePress 规范容器
     text = re.sub(r':::\s*warn\b', '::: warning', text)
     text = re.sub(r':::\s*scaffold\s+base\b', '::: tip 基础补给包 ·', text)
     text = re.sub(r':::\s*scaffold\s+advance\b', '::: info 压轴拔高 ·', text)
 
-    # 3. 替换 ::: quiz 占位符
-    if quiz_data:
-        quiz_blocks = []
-        for anchor, questions in quiz_data.items():
-            for item in questions:
-                # 选择题
-                if 'opts' in item:
-                    q = item.get('q', '').replace('"', '&quot;')
-                    opts_json = json.dumps(item.get('opts', []), ensure_ascii=False)
-                    ans_idx = item.get('ans', 0)
-                    ans_letter = ['A', 'B', 'C', 'D', 'E'][ans_idx] if isinstance(ans_idx, int) and ans_idx < 5 else 'A'
-                    why = item.get('why', '').replace('"', '&quot;')
-                    quiz_blocks.append(f"""
+    # 3. 替换 ::: quiz 占位符（精准匹配锚点并隔离题目）
+    def replace_quiz_block(match):
+        header = match.group(1).strip()
+        body = match.group(2).strip()
+
+        # 检查是否包含 empty_reason
+        empty_match = re.search(r'empty_reason:\s*(.+)', body)
+        if empty_match:
+            reason = empty_match.group(1).strip()
+            return f"::: info 随堂自测说明\n{reason}\n:::"
+
+        if not quiz_data:
+            return "::: tip 随堂自测\n本课暂未录入随堂自测题，请配合课堂模型进行推演自测。\n:::"
+
+        # 匹配对应锚点
+        anchor = None
+        anchor_m = re.search(r'锚点[：:]\s*([^\s]+)', header)
+        if anchor_m:
+            anchor = anchor_m.group(1).strip()
+        else:
+            for k in quiz_data.keys():
+                if k in header:
+                    anchor = k
+                    break
+
+        questions = []
+        if anchor and anchor in quiz_data:
+            questions = quiz_data[anchor]
+        elif len(quiz_data) == 1:
+            questions = list(quiz_data.values())[0]
+            anchor = list(quiz_data.keys())[0]
+        else:
+            anchor = list(quiz_data.keys())[0]
+            questions = quiz_data[anchor]
+
+        cards = []
+        for q_idx, item in enumerate(questions):
+            safe_anchor = re.sub(r'[^\w\-]', '_', anchor or 'quiz')
+            item_id = f"{safe_anchor}-{q_idx+1}"
+            # 选择题
+            if 'opts' in item:
+                q = item.get('q', '').replace('"', '&quot;')
+                opts_json = json.dumps(item.get('opts', []), ensure_ascii=False).replace("'", "&#39;")
+                ans_idx = item.get('ans', 0)
+                ans_letter = ['A', 'B', 'C', 'D', 'E'][ans_idx] if isinstance(ans_idx, int) and ans_idx < 5 else 'A'
+                why = item.get('why', '').replace('"', '&quot;')
+                cat = anchor or '概念理解'
+                cards.append(f"""
 <QuizCard
+  id="{item_id}"
   question="{q}"
   :options='{opts_json}'
   answer="{ans_letter}"
-  category="{anchor}"
+  category="{cat}"
   explanation="{why}"
-/>
-""")
-                # 高考大题分步踩分自测
-                elif 'criteria' in item:
-                    q = item.get('q', '')
-                    ans = item.get('answer', '')
-                    crit = item.get('criteria', '')
-                    quiz_blocks.append(f"""
-<StepScoreCard>
+/>""")
+            # 高考大题分步踩分自测
+            elif 'criteria' in item or 'answer' in item:
+                q = item.get('q', '').strip()
+                ans = item.get('answer', '').strip()
+                crit = item.get('criteria', '').strip()
+                parsed_crit = parse_criteria(crit)
+                crit_json = json.dumps(parsed_crit, ensure_ascii=False).replace("'", "&#39;")
+                cards.append(f"""
+<StepScoreCard id="{item_id}" :criteria='{crit_json}'>
   <template #question>
 {q}
   </template>
@@ -77,11 +137,11 @@ def transform_markdown(md_content: str, quiz_data: dict = None) -> str:
   <template #pitfall>
 {crit}
   </template>
-</StepScoreCard>
-""")
+</StepScoreCard>""")
 
-        replacement = "\n".join(quiz_blocks)
-        text = re.sub(r':::\s*quiz\s*.*?\n:::', replacement, text)
+        return "\n".join(cards) if cards else ""
+
+    text = re.sub(r':::\s*quiz\b([^\r\n]*)\r?\n(.*?):::', replace_quiz_block, text, flags=re.DOTALL)
 
     return text
 
@@ -150,6 +210,24 @@ def sync():
                 curriculum_data = yaml.safe_load(cf) or {}
                 curriculum_nodes = curriculum_data.get('nodes', [])
 
+        # 读取 progress.yaml 并合并学生实际学习状态
+        prog_yaml_path = os.path.join(sub_path, 'progress.yaml')
+        progress_nodes = {}
+        if os.path.exists(prog_yaml_path):
+            with open(prog_yaml_path, 'r', encoding='utf-8') as pf:
+                prog_data = yaml.safe_load(pf) or {}
+                progress_nodes = prog_data.get('nodes', {}) or {}
+
+        for n in curriculum_nodes:
+            nid = n.get('id', '')
+            if nid in progress_nodes:
+                p_item = progress_nodes[nid]
+                if isinstance(p_item, dict):
+                    if 'status' in p_item:
+                        n['status'] = p_item['status']
+                    if 'mastery' in p_item:
+                        n['mastery'] = p_item['mastery']
+
         # 构建完整的知识节点卡片
         nodes_md_blocks = []
         for idx, n in enumerate(curriculum_nodes):
@@ -173,7 +251,7 @@ def sync():
             action_link = f"[👉 进入微课学习]({matched_lesson['link']})" if matched_lesson else "_待解锁课件_"
 
             nodes_md_blocks.append(f"""
-### 0{idx+1} · {ntitle}
+### {idx+1:02d} · {ntitle}
 
 <div class="highschool-node-card">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
@@ -243,17 +321,46 @@ def export_dashboard_data(all_subjects):
             if loaded_prof:
                 profile_data.update(loaded_prof)
 
+    # 扫描所有科目的错题，并按艾宾浩斯与认知分类统计
+    today = datetime.date.today().strftime('%Y-%m-%d')
+    due_mistakes_count = 0
+    taxonomy_counts = {
+        '审题遗漏': 0,
+        '概念混淆': 0,
+        '模型套错': 0,
+        '计算失误': 0
+    }
+
+    for s in all_subjects:
+        misc_file = os.path.join(SRC_DIR, s['id'], 'misconceptions.yaml')
+        if os.path.exists(misc_file):
+            with open(misc_file, 'r', encoding='utf-8') as mf:
+                try:
+                    items = yaml.safe_load(mf) or []
+                    if isinstance(items, list):
+                        for it in items:
+                            tax = it.get('taxonomy', '概念混淆')
+                            if tax in taxonomy_counts:
+                                taxonomy_counts[tax] += 1
+                            else:
+                                taxonomy_counts[tax] = 1
+                            rdate = str(it.get('next_review_date', '1970-01-01'))
+                            status = it.get('status', '待攻坚')
+                            if rdate <= today and status != '已掌握':
+                                due_mistakes_count += 1
+                except Exception:
+                    pass
+
     dashboard_subjects = []
     for s in all_subjects:
         nodes = s.get('nodes', [])
         total_nodes = len(nodes)
         completed_nodes = sum(1 for n in nodes if n.get('status') == '能独立应用')
         learning_nodes = sum(1 for n in nodes if n.get('status') == '学习中')
-        
+
         status_text = '进行中' if learning_nodes > 0 or completed_nodes > 0 else '考纲已规划'
         status_key = 'ongoing' if status_text == '进行中' else 'planned'
 
-        # 严谨计算已学掌握度（Learned Mastery）与考纲总达成度（Syllabus Coverage）
         learned_nodes = [n for n in nodes if n.get('status') != '未开始' or float(n.get('mastery', 0)) > 0]
         if learned_nodes:
             learned_mastery_pct = round(sum(float(n.get('mastery', 0)) for n in learned_nodes) / len(learned_nodes) * 100)
@@ -263,14 +370,12 @@ def export_dashboard_data(all_subjects):
         syllabus_mastery_pct = round(sum(float(n.get('mastery', 0)) for n in nodes) / total_nodes * 100) if total_nodes > 0 else 0
         progress_pct = int((completed_nodes + 0.5 * learning_nodes) / total_nodes * 100) if total_nodes > 0 else 0
 
-        # 当前正在学习的节点
         current_node_title = '待开启'
         for n in nodes:
             if n.get('status') == '学习中':
                 current_node_title = n.get('title', '')
                 break
 
-        # 整理每个节点供前端展示
         formatted_nodes = []
         for n in nodes:
             nid = n.get('id', '')
@@ -310,7 +415,8 @@ def export_dashboard_data(all_subjects):
     out_json_path = os.path.join(SITE_DIR, '.vitepress', 'theme', 'curriculum-data.json')
     data_payload = {
         'profile': profile_data,
-        'dueMistakesCount': 1,
+        'dueMistakesCount': due_mistakes_count,
+        'taxonomyCounts': taxonomy_counts,
         'subjects': dashboard_subjects
     }
     with open(out_json_path, 'w', encoding='utf-8') as jf:
@@ -320,8 +426,7 @@ def export_dashboard_data(all_subjects):
 
 def update_vitepress_config(all_subjects):
     config_path = os.path.join(SITE_DIR, '.vitepress', 'config.mts')
-    
-    # 构建 nav
+
     subject_nav_items = []
     sidebar_map = {}
 
@@ -330,11 +435,11 @@ def update_vitepress_config(all_subjects):
             'text': s['name'],
             'link': f"/subjects/{s['id']}/"
         })
-        
+
         items = [{'text': '📌 学科总览与考纲', 'link': f"/subjects/{s['id']}/"}]
         for l in s['lessons']:
             items.append({'text': l['text'], 'link': l['link']})
-            
+
         sidebar_map[f"/subjects/{s['id']}/"] = [
             {
                 'text': s['name'],

@@ -67,6 +67,10 @@ export default defineConfig({
                         {
                               "text": "水的电离平衡与离子积常数Kw",
                               "link": "/subjects/chemistry-water-ionization/lessons/water.ionization-kw"
+                        },
+                        {
+                              "text": "外界条件对水电离平衡的影响与计算",
+                              "link": "/subjects/chemistry-water-ionization/lessons/water.equilibrium-shift"
                         }
                   ]
             }

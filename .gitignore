@@ -6,4 +6,5 @@ __pycache__/
 Thumbs.db
 site/.vitepress/cache/
 site/.vitepress/dist/
-workspace/.learning/profile.yaml
+workspace/
+

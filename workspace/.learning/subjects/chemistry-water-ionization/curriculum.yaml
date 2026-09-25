@@ -18,8 +18,8 @@ nodes:
     过关标准:
       - 能够准确书写水的电离平衡方程式并解释吸热原因
       - 能够说明升温对Kw、c(H+)、c(OH-)的具体变化方向
-    status: 学习中
-    mastery: 0.2
+    status: 已完成
+    mastery: 1.0
 
   - id: water.equilibrium-shift
     title: 外界条件对水电离平衡的影响与计算
@@ -40,8 +40,8 @@ nodes:
     过关标准:
       - 能推导25℃下0.01 mol/L NaOH溶液中由水电离出的c_水(OH-)
       - 能准确判断外加酸、碱、强酸弱碱盐对水电离程度的抑制或促进
-    status: 未开始
-    mastery: 0.0
+    status: 学习中
+    mastery: 0.3
 
   - id: water.ph-and-neutrality
     title: 溶液酸碱性本质与pH核心辨析

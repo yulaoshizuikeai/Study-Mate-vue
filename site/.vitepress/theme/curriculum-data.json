@@ -22,7 +22,13 @@
       "规范大题步骤与防审题遗漏"
     ]
   },
-  "dueMistakesCount": 1,
+  "dueMistakesCount": 0,
+  "taxonomyCounts": {
+    "审题遗漏": 0,
+    "概念混淆": 1,
+    "模型套错": 0,
+    "计算失误": 0
+  },
   "subjects": [
     {
       "id": "chemistry-water-ionization",
@@ -33,18 +39,18 @@
       "statusClass": "status-ongoing",
       "isExpanded": true,
       "progressPercent": 16,
-      "masteryPercent": 20,
-      "syllabusMasteryPercent": 7,
+      "masteryPercent": 65,
+      "syllabusMasteryPercent": 43,
       "completedNodes": 0,
-      "currentNode": "水的电离平衡与离子积常数Kw",
+      "currentNode": "外界条件对水电离平衡的影响与计算",
       "nodes": [
         {
           "id": "water.ionization-kw",
           "title": "水的电离平衡与离子积常数Kw",
           "kind": "概念",
           "objective": "掌握水的微弱电离过程，理解离子积常数Kw定义与温度唯一决定性",
-          "status": "学习中",
-          "mastery": 0.2,
+          "status": "已完成",
+          "mastery": 1.0,
           "prerequisites": [],
           "lessonLink": "/subjects/chemistry-water-ionization/lessons/water.ionization-kw"
         },
@@ -53,12 +59,12 @@
           "title": "外界条件对水电离平衡的影响与计算",
           "kind": "模型",
           "objective": "掌握温度、酸、碱、盐对水电离平衡移动方向的判断与水电离离子浓度计算",
-          "status": "未开始",
-          "mastery": 0.0,
+          "status": "学习中",
+          "mastery": 0.3,
           "prerequisites": [
             "water.ionization-kw"
           ],
-          "lessonLink": ""
+          "lessonLink": "/subjects/chemistry-water-ionization/lessons/water.equilibrium-shift"
         },
         {
           "id": "water.ph-and-neutrality",

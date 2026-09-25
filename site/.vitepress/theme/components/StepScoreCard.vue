@@ -1,12 +1,30 @@
 <template>
-  <div class="highschool-step-score-card">
+  <div class="highschool-step-score-card" :class="{ 'has-score': checkedItems.length > 0 }">
     <div class="step-card-header">
       <div class="header-left">
         <span class="exam-badge">🎯 高考母题 · 分步踩分自测</span>
         <span class="score-pill">总分 {{ totalPoints }} 分</span>
+        <span v-if="checkedItems.length > 0" class="status-pill" :class="scorePercent === 100 ? 'pill-perfect' : 'pill-done'">
+          已得 {{ currentScore }}/{{ totalPoints }} 分
+        </span>
       </div>
+
       <div class="header-right">
-        <button class="toggle-btn" @click="isOpen = !isOpen">
+        <button
+          v-if="checkedItems.length > 0"
+          class="reset-step-btn"
+          title="重置当前自评采分点"
+          type="button"
+          @click="resetScoring"
+        >
+          <svg class="reset-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.5 8a5.5 5.5 0 0 1 9.3-3.9L14 6.5M13.5 8a5.5 5.5 0 0 1-9.3 3.9L2 9.5"></path>
+            <path d="M14 2.5v4h-4M2 13.5v-4h4"></path>
+          </svg>
+          重置
+        </button>
+
+        <button class="toggle-btn" type="button" @click="toggleOpen">
           {{ isOpen ? '收起采分细则' : '展开采分自测' }}
           <span class="arrow" :class="{ 'is-open': isOpen }">▼</span>
         </button>
@@ -32,7 +50,8 @@
           <div class="score-bar-fill" :style="{ width: `${scorePercent}%` }"></div>
         </div>
         <div class="score-evaluation">
-          <span v-if="scorePercent === 100" class="eval-perfect">🌟 满分通关！卷面表述极度严谨！</span>
+          <span v-if="checkedItems.length === 0" class="eval-empty">💡 请先自己独立草稿作答，再逐条核对下列评分标准！</span>
+          <span v-else-if="scorePercent === 100" class="eval-perfect">🌟 满分通关！卷面表述极度严谨！</span>
           <span v-else-if="scorePercent >= 70" class="eval-good">👍 掌握良好，注意规范细节与单位！</span>
           <span v-else class="eval-need-work">⚠️ 仍有失分点，请核对是否漏列方程或方向错误！</span>
         </div>
@@ -53,6 +72,7 @@
               :value="idx" 
               v-model="checkedItems"
               class="criteria-checkbox"
+              @change="onCheckedChange"
             />
             <div class="criteria-detail">
               <span class="criteria-desc">{{ item.desc }}</span>
@@ -79,12 +99,25 @@
           <slot name="pitfall">{{ pitfall }}</slot>
         </div>
       </div>
+
+      <!-- 自动保存底栏提示 -->
+      <div class="save-status-bar">
+        <span class="save-tip">
+          <svg class="save-check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"></polyline>
+          </svg>
+          踩分自测进度已自动保存至本地
+        </span>
+        <span v-if="savedTime" class="save-time">上次自测：{{ savedTime }}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vitepress'
+import { generateProblemId, getStepRecord, saveRecord, removeRecord } from '../utils/practiceStorage'
 
 export interface CriteriaItem {
   desc: string
@@ -92,26 +125,56 @@ export interface CriteriaItem {
 }
 
 const props = withDefaults(defineProps<{
+  id?: string
   question?: string
   solution?: string
   pitfall?: string
   criteria?: CriteriaItem[]
 }>(), {
+  id: '',
   question: '',
   solution: '',
   pitfall: '',
-  criteria: () => [
-    { desc: '垂直斜面方向受力平衡列式正确', points: 2 },
-    { desc: '滑动摩擦力公式计算正确并标明方向', points: 2 },
-    { desc: '沿斜面方向列出牛顿平衡方程', points: 2 },
-    { desc: '最终拉力结果正确且带单位', points: 1 }
-  ]
+  criteria: () => []
 })
 
+const route = useRoute()
 const isOpen = ref(false)
 const checkedItems = ref<number[]>([])
+const savedTime = ref<string>('')
 
-const criteriaList = computed(() => props.criteria)
+const problemId = computed(() => {
+  return generateProblemId(route.path, props.id, props.question || props.solution || props.pitfall)
+})
+
+const criteriaList = computed<CriteriaItem[]>(() => {
+  if (props.criteria && props.criteria.length > 0) {
+    return props.criteria
+  }
+  if (props.pitfall) {
+    const list: CriteriaItem[] = []
+    const lines = props.pitfall.split('\n')
+    for (const l of lines) {
+      const line = l.trim()
+      if (!line || line.startsWith('【')) continue
+      const m = line.match(/([（(]?(?:得|\+)?\s*(\d+)\s*分[)）]?)/)
+      const points = m ? parseInt(m[2], 10) : 1
+      let desc = line.replace(/^[①②③④⑤⑥⑦⑧⑨⑩\d\.\s、-]+/, '').trim()
+      if (m) {
+        desc = desc.replace(m[1], '').trim().replace(/[；;。，,]$/, '')
+      }
+      if (desc) {
+        list.push({ desc, points })
+      }
+    }
+    if (list.length > 0) return list
+  }
+  return [
+    { desc: '解题思路清晰，列出关键物理/化学方程', points: 3 },
+    { desc: '过程推导与公式代入准确', points: 3 },
+    { desc: '最终数值计算正确且带规范物理量单位', points: 2 }
+  ]
+})
 
 const totalPoints = computed(() => {
   return criteriaList.value.reduce((sum, item) => sum + item.points, 0)
@@ -127,6 +190,52 @@ const currentScore = computed(() => {
 const scorePercent = computed(() => {
   if (!totalPoints.value) return 0
   return Math.round((currentScore.value / totalPoints.value) * 100)
+})
+
+function persistCurrentState() {
+  saveRecord({
+    type: 'step',
+    id: problemId.value,
+    path: route.path,
+    isOpen: isOpen.value,
+    checkedItems: [...checkedItems.value],
+    score: currentScore.value,
+    totalPoints: totalPoints.value,
+    updatedAt: Date.now()
+  })
+  savedTime.value = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+}
+
+function toggleOpen() {
+  isOpen.value = !isOpen.value
+  persistCurrentState()
+}
+
+function onCheckedChange() {
+  persistCurrentState()
+}
+
+function resetScoring() {
+  checkedItems.value = []
+  savedTime.value = ''
+  removeRecord(problemId.value)
+}
+
+onMounted(() => {
+  const existing = getStepRecord(problemId.value)
+  if (existing) {
+    if (Array.isArray(existing.checkedItems)) {
+      checkedItems.value = existing.checkedItems
+    }
+    if (typeof existing.isOpen === 'boolean') {
+      isOpen.value = existing.isOpen
+    } else if (checkedItems.value.length > 0) {
+      isOpen.value = true
+    }
+    if (existing.updatedAt) {
+      savedTime.value = new Date(existing.updatedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+    }
+  }
 })
 </script>
 
@@ -147,12 +256,21 @@ const scorePercent = computed(() => {
   padding: 0.85rem 1.25rem;
   background: var(--vp-c-bg-mute);
   border-bottom: 1px solid var(--vp-c-divider);
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .exam-badge {
@@ -172,6 +290,48 @@ const scorePercent = computed(() => {
   padding: 0.2rem 0.5rem;
   border-radius: 12px;
   border: 1px solid var(--vp-c-divider);
+}
+
+.status-pill {
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.pill-done {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
+.pill-perfect {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+}
+
+.reset-step-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.reset-step-btn:hover {
+  color: #7c3aed;
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.reset-icon {
+  width: 12px;
+  height: 12px;
 }
 
 .toggle-btn {
@@ -264,6 +424,7 @@ const scorePercent = computed(() => {
   font-weight: 600;
 }
 
+.eval-empty { color: var(--vp-c-text-2); }
 .eval-perfect { color: #10b981; }
 .eval-good { color: #3b82f6; }
 .eval-need-work { color: #f59e0b; }
@@ -364,5 +525,30 @@ const scorePercent = computed(() => {
   font-size: 0.9rem;
   color: var(--vp-c-text-1);
   line-height: 1.5;
+}
+
+/* 自动保存状态指示 */
+.save-status-bar {
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--vp-c-divider);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--vp-c-text-3);
+}
+
+.save-tip {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.save-check-icon {
+  width: 12px;
+  height: 12px;
 }
 </style>

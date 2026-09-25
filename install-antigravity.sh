@@ -33,9 +33,11 @@ echo -e "$CONFIG_YAML" > "$HOME/.gemini/antigravity/studymate-config.yaml"
 mkdir -p "$ROOT/.agents/skills"
 cp -rf "$SKILLS_SRC"/* "$ROOT/.agents/skills/"
 
+python3 "$ROOT/scripts/sync_to_vitepress.py" 2>/dev/null || true
+
 echo "✅ 学习工作区已就绪: $WORKSPACE"
 echo "=========================================================="
 echo "🎉 安装完成！在 Antigravity 中开启高中自学的方式："
 echo "👉 在对话框中直接说：『我想学高中物理动力学』"
-echo "👉 运行 Web 知识库看板：npm run serve"
+echo "👉 运行 Web 知识库看板：npm run dev"
 echo "=========================================================="

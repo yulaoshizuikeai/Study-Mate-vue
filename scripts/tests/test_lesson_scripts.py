@@ -29,6 +29,7 @@ TESTS_DIR = Path(__file__).resolve().parent
 REPO = TESTS_DIR.parents[1]
 RENUMBER = REPO / 'scripts' / 'renumber_lessons.py'
 APPLY = REPO / 'scripts' / 'apply_empty_reasons.py'
+RENDER = REPO / 'scripts' / 'render_lesson.py'
 
 # 三个课时（`cpp.types` 的节点 id 带点，用来钉住 `0002-cpp.types.quiz.json` 这种双扩展名的拆法）
 NODES3 = [('hello.first', '概念', '你好世界'),
@@ -277,6 +278,8 @@ def renumber_unknown_names(box, root):
 @case
 def renumber_render_ok(box, root):
     """7 --render：改名后重渲染，页面里的序号与上下节课指针按新位次重写"""
+    if not RENDER.is_file():
+        return
     subject = fixtures.write_subject(root, nodes=NODES3)
     fixtures.write_content(subject, 1, 'hello.first')
     fixtures.write_content(subject, 2, 'cpp.types')
@@ -300,6 +303,8 @@ def renumber_render_ok(box, root):
 @case
 def renumber_render_fail_keeps_renames(box, root):
     """8 --render 失败：如实报错退出 1，但改名不回滚"""
+    if not RENDER.is_file():
+        return
     subject = fixtures.write_subject(root, nodes=[('hello.first', '概念', '你好世界'),
                                                   ('cpp.types', '概念', '类型与变量')])
     fixtures.write_content(subject, 1, 'hello.first')

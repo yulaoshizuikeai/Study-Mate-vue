@@ -22,7 +22,7 @@ title: 错题本与深度认知归因中心
 ## 📌 近期靶向复盘错题
 
 ### 错题 01：斜面上物块受力分析与下滑力伪概念
-- **来源课时**：[01 规范受力分析与隔离法](/subjects/physics-dynamics/lessons/01-force-analysis)
+- **来源课时**：[01 规范受力分析与隔离法](/subjects/physics-dynamics/lessons/dynamics.force-analysis)
 - **错因归类**：<span style="color:#ef4444; font-weight:bold;">[概念混淆]</span>
 - **当时误选**：B（认为物块受重力、支持力、静摩擦力和下滑力四个力）
 - **顿悟反思**：

@@ -899,6 +899,115 @@ def check_theme_toggle(text):
     return problems
 
 
+LESSON_MD_NAME_RE = re.compile(r'^(\d{4})-(?:[a-z0-9]+[.-])*[a-z0-9]+\.md$')
+
+
+def check_markdown_file(path, raw, subject=None, node=None):
+    problems = []
+    notes = []
+    fname = os.path.basename(path)
+
+    # 1. 文件名检查
+    m_name = LESSON_MD_NAME_RE.match(fname)
+    if not m_name:
+        problems.append(f"文件名 '{fname}' 不符合 NNNN-dash-case.md（四位数字 + 节点标识）")
+
+    # 2. 标题检查 (frontmatter title)
+    title_match = re.search(r'^---\r?\n([\s\S]*?)\r?\ntitle:\s*([^\r\n]+)', raw) or re.search(r'^title:\s*([^\r\n]+)', raw, re.M)
+    if not title_match:
+        problems.append('缺少课件标题：需在 frontmatter 中配置 title: <标题>')
+
+    # 3. 节点与大纲对齐
+    kind = None
+    if subject is not None and node is not None:
+        if subject.error:
+            notes.append(f'跳过大纲比对：{subject.error}')
+        else:
+            kind = subject.kind_of(node)
+            expected_index = subject.index_of(node)
+            if expected_index is None:
+                problems.append(f"节点 '{node}' 未在大纲 curriculum.yaml 的 nodes 中声明")
+            elif m_name:
+                num = int(m_name.group(1))
+                if num != expected_index:
+                    problems.append(f"课件序号 {num:04d} 与大纲位次 {expected_index:04d} 不符")
+    else:
+        notes.append('未提供 --subject / --node，跳过大纲节点对齐校验')
+
+    # 4. 题目检查：检查配套的 .quiz.json
+    base_no_ext = os.path.splitext(path)[0]
+    quiz_json_path = f"{base_no_ext}.quiz.json"
+    has_quiz_block = bool(re.search(r':::\s*quiz\b', raw))
+
+    if os.path.isfile(quiz_json_path):
+        try:
+            with open(quiz_json_path, encoding='utf-8') as qf:
+                quiz_data = json.load(qf)
+            if not isinstance(quiz_data, dict):
+                problems.append(f"题库 {os.path.basename(quiz_json_path)} 必须是 JSON 对象")
+            else:
+                for anchor, questions in quiz_data.items():
+                    if not isinstance(questions, list) or len(questions) == 0:
+                        problems.append(f"锚点 '{anchor}' 的题目列表必须是非空数组")
+                        continue
+                    for idx, q_item in enumerate(questions, 1):
+                        label = f"[{anchor} 第{idx}题] "
+                        if not isinstance(q_item, dict):
+                            problems.append(f"{label}题目必须是对象")
+                            continue
+                        if not q_item.get('q'):
+                            problems.append(f"{label}缺少题面 q")
+                        is_choice = 'opts' in q_item or 'ans' in q_item
+                        is_open = 'answer' in q_item or 'criteria' in q_item
+                        if is_choice and is_open:
+                            problems.append(f"{label}题型冲突：选择题与开放题字段不能混用")
+                        elif is_choice:
+                            opts = q_item.get('opts')
+                            ans = q_item.get('ans')
+                            if not isinstance(opts, list) or len(opts) < 2:
+                                problems.append(f"{label}选择题缺少合法 options 列表")
+                            if isinstance(ans, bool) or not isinstance(ans, int) or not (0 <= ans < len(opts or [])):
+                                problems.append(f"{label}选择题答案 ans 越界或非整数")
+                            if not q_item.get('why'):
+                                problems.append(f"{label}选择题缺少解析 why")
+                        elif is_open:
+                            if not q_item.get('answer'):
+                                problems.append(f"{label}开放题缺少参考解答 answer")
+                            if not q_item.get('criteria'):
+                                problems.append(f"{label}开放题缺少采分点 criteria")
+                        else:
+                            problems.append(f"{label}未知题型：需为选择题或开放题")
+        except Exception as e:
+            problems.append(f"题库 JSON 解析失败：{e}")
+    elif kind != '实验' and has_quiz_block:
+        problems.append(f"课件中存在 ::: quiz 占位符，但未找到配套题库文件 {os.path.basename(quiz_json_path)}")
+
+    # 5. 图片检查
+    for m in re.finditer(r'!\[(.*?)\]\((.*?)\)', raw):
+        alt = m.group(1)
+        src = m.group(2).strip()
+        if IMG_SCHEME_RE.match(src):
+            notes.append(f"图片用了外链（{src[:50]}）")
+        else:
+            local_target = os.path.normpath(os.path.join(os.path.dirname(path) or '.', unquote(src.split('#', 1)[0].split('?', 1)[0])))
+            if not os.path.isfile(local_target):
+                problems.append(f"图片引用了不存在的文件：{src}")
+        if not alt.strip():
+            notes.append(f"图片缺少 alt 描述：{src[:40]}")
+
+    # 6. SVG 检查
+    svg_blocks = re.findall(r':::\s*svg(?:[^\n]*)\n([\s\S]*?)\n:::', raw)
+    for idx, svg_code in enumerate(svg_blocks, 1):
+        if '<svg' not in svg_code or '</svg>' not in svg_code:
+            problems.append(f"第 {idx} 处 ::: svg 块内的 SVG 标签未正确闭合")
+
+    # 7. 残留占位符
+    if PLACEHOLDER_RE.search(raw):
+        problems.append("课件中残留了手写时代未填充的 '<!-- 题目位置' 标记")
+
+    return problems, notes
+
+
 def check_file(path, subject=None, node=None):
     """对一个课件跑完所有检查，返回 (problems, notes)：problems 为空 = 无阻断项。"""
     try:
@@ -908,6 +1017,9 @@ def check_file(path, subject=None, node=None):
         return [f'无法解码文件（需 UTF-8）：{exc.reason}'], []
     except OSError as exc:
         return [f'无法读取文件：{exc.strerror or exc}'], []
+
+    if path.endswith('.md'):
+        return check_markdown_file(path, raw, subject, node)
 
     text = strip_comments(raw)
     kind = subject.kind_of(node) if (subject is not None and node is not None

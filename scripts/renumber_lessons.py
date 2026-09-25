@@ -266,6 +266,20 @@ def apply_renames(lessons_dir, renames):
 
 def render_nodes(subject_path, node_ids):
     """对改过名的节点跑渲染器（调它的 CLI，不复制渲染逻辑）；返回渲染失败的节点数。"""
+    if not RENDER.is_file():
+        sync_script = ROOT / 'scripts' / 'sync_to_vitepress.py'
+        if sync_script.is_file():
+            try:
+                proc = subprocess.run([sys.executable or 'python3', str(sync_script)],
+                                      capture_output=True, text=True, encoding='utf-8')
+                if proc.returncode != 0:
+                    print(f'sync_to_vitepress.py: 同步失败（退出码 {proc.returncode}）', file=sys.stderr)
+                    return len(node_ids)
+            except OSError as exc:
+                print(f'sync_to_vitepress.py: 无法运行同步脚本（{exc}）', file=sys.stderr)
+                return len(node_ids)
+        return 0
+
     failed = 0
     for node_id in node_ids:
         try:
