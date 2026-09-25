@@ -89,9 +89,12 @@ def _tree(snapshot):
 
 def run(script, *args):
     """跑一个被测脚本，返回 (退出码, stdout, stderr)。"""
+    env = os.environ.copy()
+    env['PYTHONUTF8'] = '1'
     proc = subprocess.run([sys.executable, str(script), *[str(arg) for arg in args]],
-                          capture_output=True, text=True, encoding='utf-8')
-    return proc.returncode, proc.stdout, proc.stderr
+                          capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
+    return proc.returncode, proc.stdout or '', proc.stderr or ''
+
 
 
 def snapshot(root):

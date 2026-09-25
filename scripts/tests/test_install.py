@@ -20,6 +20,13 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = REPO / ('install.ps1' if os.name == 'nt' else 'install.sh')
 
+if sys.platform == 'win32':
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
+
 failures = 0
 total = 0
 
@@ -181,10 +188,11 @@ def main():
           same_path(config_of(home)['workspace'], os.path.join(tmp, 'ws')), config_of(home))
 
     # ③ 首课流程要用的：工作区能生成主页（用沙箱配置，不碰真实 ~/.dsh）
-    env = dict(os.environ, HOME=home, DSH_HOME=os.path.join(home, '.dsh'))
+    env = dict(os.environ, HOME=home, DSH_HOME=os.path.join(home, '.dsh'), PYTHONUTF8='1')
     gen = subprocess.run([sys.executable, str(REPO / 'scripts' / 'gen_home.py')], env=env,
-                         capture_output=True, text=True)
-    check('装完能跑 gen_home 生成空状态主页', gen.returncode == 0, gen.stdout + gen.stderr)
+                         capture_output=True, text=True, encoding='utf-8', errors='replace')
+    check('装完能跑 gen_home 生成空状态主页', gen.returncode == 0, (gen.stdout or '') + (gen.stderr or ''))
+
     check('根主页与共享层就位（含抬头看板娘）',
           os.path.isfile(os.path.join(tmp, 'ws', 'index.html')) and
           os.path.isdir(os.path.join(tmp, 'ws', '.learning', 'assets', 'sayo')) and

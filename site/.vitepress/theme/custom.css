@@ -1,0 +1,83 @@
+/**
+ * StudyMate-HighSchool 专属主题与理科排版样式
+ */
+
+:root {
+  --vp-c-brand-1: #0284c7;
+  --vp-c-brand-2: #0369a1;
+  --vp-c-brand-3: #075985;
+  --vp-c-brand-soft: rgba(2, 132, 199, 0.12);
+}
+
+.dark {
+  --vp-c-brand-1: #38bdf8;
+  --vp-c-brand-2: #0ea5e9;
+  --vp-c-brand-3: #0284c7;
+  --vp-c-brand-soft: rgba(56, 189, 248, 0.15);
+}
+
+/* 数学公式 KaTeX 排版优化 */
+.katex-display {
+  padding: 0.8rem 0;
+  margin: 1rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex {
+  font-size: 1.1em;
+}
+
+/* 高中理科重点定理框 */
+.theorem-box {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  background: var(--vp-c-brand-soft);
+  border-left: 4px solid var(--vp-c-brand-1);
+}
+
+.theorem-title {
+  font-weight: 700;
+  color: var(--vp-c-brand-1);
+  margin-bottom: 0.5rem;
+}
+
+/* 基础脚手架/压轴拔高自定义容器 */
+.custom-block.scaffold-base {
+  border-color: #0284c7;
+  background-color: rgba(2, 132, 199, 0.08);
+}
+
+.custom-block.scaffold-advance {
+  border-color: #8b5cf6;
+  background-color: rgba(139, 92, 246, 0.08);
+}
+
+/* 全局理科 SVG 矢量图防塌陷与高清渲染 */
+svg {
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+.highschool-svg-viewer svg {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 auto;
+}
+
+/* 学科知识节点卡片 */
+.highschool-node-card {
+  margin: 1rem 0 1.5rem 0;
+  padding: 1.15rem 1.35rem;
+  border-radius: 10px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.highschool-node-card:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+}

@@ -1,0 +1,150 @@
+{
+  "data": [
+    {
+      "id": "page-index",
+      "title": "课程总览",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1790254000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1099,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-fc5835a6",
+          "measuredAt": 1790254998426
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": [
+          {
+            "domId": "nav-home",
+            "targetPageId": "page-index",
+            "hideEdge": true
+          },
+          {
+            "domId": "card-physics",
+            "targetPageId": "page-subject-index",
+            "transitionLabel": "进入科目"
+          },
+          {
+            "domId": "card-chemistry",
+            "targetPageId": "page-subject-index",
+            "transitionLabel": "进入科目"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-subject-index",
+      "title": "科目主页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1790254001,
+      "canvasData": {
+        "x": 480,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1277,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-1a26cc34",
+          "measuredAt": 1790254998426
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/subject-index.html",
+        "interactions": [
+          {
+            "domId": "nav-back-home",
+            "targetPageId": "page-index",
+            "hideEdge": true,
+            "transitionLabel": "返回总览"
+          },
+          {
+            "domId": "lesson-link-force",
+            "targetPageId": "page-lesson",
+            "transitionLabel": "打开课件"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-lesson",
+      "title": "课件页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1790254002,
+      "canvasData": {
+        "x": 960,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 3369,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a2f4d22f",
+          "measuredAt": 1790254998426
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/lesson.html",
+        "interactions": [
+          {
+            "domId": "nav-back-subject",
+            "targetPageId": "page-subject-index",
+            "hideEdge": true,
+            "transitionLabel": "返回科目"
+          },
+          {
+            "domId": "nav-prev-lesson",
+            "targetPageId": "page-lesson",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-next-lesson",
+            "targetPageId": "page-lesson",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "学习看板娘",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1790254003,
+      "canvasData": {
+        "x": 84,
+        "y": 708,
+        "naturalSize": {
+          "width": 640,
+          "height": 425
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/learn-mascot.png"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": false,
+    "deviceType": "desktop",
+    "projectName": "StudyMate UI 优化草案",
+    "designLibrary": {
+      "name": "TraeWork",
+      "id": "dl_builtin_trae_work",
+      "version": null,
+      "scope": "built-in-global",
+      "path": "c:\\Users\\Yu_233\\.trae-cn\\design_libraries\\TraeWork",
+      "versionSource": "selected-context"
+    },
+    "showEdge": false
+  }
+}

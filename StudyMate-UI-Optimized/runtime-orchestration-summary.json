@@ -1,0 +1,345 @@
+{
+  "project": {
+    "name": "StudyMate-UI-Optimized",
+    "path": "d:\\OneDrive\\Desktop\\StudyMate-HighSchool\\StudyMate-UI-Optimized",
+    "resolvedLane": "library_bound",
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [
+      {
+        "path": "c:/Users/Yu_233/.trae-cn/builtin/design/default/skills/solo-design/intent-workflows/intent-page-library-bound/INTENT_WORKFLOW.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "c:/Users/Yu_233/.trae-cn/builtin/design/default/skills/solo-design/intent-workflows/intent-page-library-bound/start-library-bound-project.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "c:/Users/Yu_233/.trae-cn/builtin/design/default/skills/solo-design/intent-workflows/intent-page-library-bound/design-library-ingestion.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "c:/Users/Yu_233/.trae-cn/builtin/design/default/skills/solo-design/shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "c:/Users/Yu_233/.trae-cn/builtin/design/default/skills/solo-design/shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      }
+    ],
+    "validationRunDiscipline": "blocking",
+    "lowValueCallWatchdog": {
+      "noProgressNextAction": "proceed_to_dispatch"
+    },
+    "deviceType": "desktop",
+    "autoLayout": true,
+    "dispatchPreflightManifest": [
+      {
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html",
+        "title": "课程总览",
+        "packetType": "LibraryBoundPagePacket",
+        "pageRuntimeGuide": "intent-workflows/intent-page-library-bound/library-bound-page-runtime.md",
+        "dispatchContract": "intent-workflows/intent-page-library-bound/dispatch-contract.md",
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/index.html"
+          ]
+        },
+        "allowedWritePaths": [
+          "pages/index.html"
+        ]
+      },
+      {
+        "nodeId": "page-subject-index",
+        "htmlSrc": "pages/subject-index.html",
+        "title": "科目主页",
+        "packetType": "LibraryBoundPagePacket",
+        "pageRuntimeGuide": "intent-workflows/intent-page-library-bound/library-bound-page-runtime.md",
+        "dispatchContract": "intent-workflows/intent-page-library-bound/dispatch-contract.md",
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/subject-index.html"
+          ]
+        },
+        "allowedWritePaths": [
+          "pages/subject-index.html"
+        ]
+      },
+      {
+        "nodeId": "page-lesson",
+        "htmlSrc": "pages/lesson.html",
+        "title": "课件页",
+        "packetType": "LibraryBoundPagePacket",
+        "pageRuntimeGuide": "intent-workflows/intent-page-library-bound/library-bound-page-runtime.md",
+        "dispatchContract": "intent-workflows/intent-page-library-bound/dispatch-contract.md",
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/lesson.html"
+          ]
+        },
+        "allowedWritePaths": [
+          "pages/lesson.html"
+        ]
+      }
+    ],
+    "expectedDispatches": [
+      {
+        "nodeId": "page-index",
+        "packetType": "LibraryBoundPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/index.html"
+        ],
+        "toolCallLedger": {
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0,
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "sha256:eyJub2RlSWQiOiJwYWdlLWluZGV4IiwicGFja2V0VHlwZSI6IkxpYnJhcnlCb3Vu"
+        }
+      },
+      {
+        "nodeId": "page-subject-index",
+        "packetType": "LibraryBoundPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/subject-index.html"
+        ],
+        "toolCallLedger": {
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0,
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "sha256:eyJub2RlSWQiOiJwYWdlLXN1YmplY3QtaW5kZXgiLCJwYWNrZXRUeXBlIjoiTGli"
+        }
+      },
+      {
+        "nodeId": "page-lesson",
+        "packetType": "LibraryBoundPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/lesson.html"
+        ],
+        "toolCallLedger": {
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0,
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "sha256:eyJub2RlSWQiOiJwYWdlLWxlc3NvbiIsInBhY2tldFR5cGUiOiJMaWJyYXJ5Qm91"
+        }
+      }
+    ],
+    "pages": [
+      {
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html",
+        "title": "课程总览",
+        "componentPlan": [
+          {
+            "slug": "buttons",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-buttons.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/buttons.json"
+          },
+          {
+            "slug": "cards",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-cards.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/cards.json"
+          },
+          {
+            "slug": "tag",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-tag.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/tag.json"
+          },
+          {
+            "slug": "progress",
+            "contractKind": "evidence",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/progress.json"
+          }
+        ]
+      },
+      {
+        "nodeId": "page-subject-index",
+        "htmlSrc": "pages/subject-index.html",
+        "title": "科目主页",
+        "componentPlan": [
+          {
+            "slug": "buttons",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-buttons.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/buttons.json"
+          },
+          {
+            "slug": "cards",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-cards.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/cards.json"
+          },
+          {
+            "slug": "tag",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-tag.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/tag.json"
+          }
+        ]
+      },
+      {
+        "nodeId": "page-lesson",
+        "htmlSrc": "pages/lesson.html",
+        "title": "课件页",
+        "componentPlan": [
+          {
+            "slug": "buttons",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-buttons.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/buttons.json"
+          },
+          {
+            "slug": "table",
+            "contractKind": "evidence",
+            "previewFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/preview/component-table.html",
+            "contractFile": "c:/Users/Yu_233/.trae-cn/design_libraries/TraeWork/components/table.json"
+          }
+        ]
+      }
+    ]
+  },
+  "designSource": {
+    "operatingMode": "library-bound",
+    "libraryIdentity": {
+      "name": "TraeWork",
+      "id": "dl_builtin_trae_work",
+      "version": null,
+      "scope": "built-in-global",
+      "path": "c:\\Users\\Yu_233\\.trae-cn\\design_libraries\\TraeWork",
+      "versionSource": "selected-context"
+    },
+    "brandPrefix": "",
+    "cssPath": "c:\\Users\\Yu_233\\.trae-cn\\design_libraries\\TraeWork\\colors_and_type.css",
+    "actualTokenNameReference": [
+      "--bg-brand",
+      "--bg-brand-hover",
+      "--bg-base-default",
+      "--bg-base-secondary",
+      "--bg-overlay-l1",
+      "--bg-overlay-l2",
+      "--bg-overlay-l3",
+      "--text-default",
+      "--text-secondary",
+      "--text-tertiary",
+      "--text-onbrand",
+      "--icon-default",
+      "--icon-secondary",
+      "--icon-tertiary",
+      "--icon-brand",
+      "--border-neutral-l1",
+      "--border-neutral-l2",
+      "--border-neutral-l3",
+      "--border-brand",
+      "--status-primary-default",
+      "--status-success-default",
+      "--status-alert-default",
+      "--status-warning-default",
+      "--status-error-default",
+      "--body-base-font-size",
+      "--body-base-line-height",
+      "--body-base-font-weight",
+      "--heading-md-font-size",
+      "--heading-lg-font-size",
+      "--heading-xl-font-size",
+      "--radius-8",
+      "--radius-12",
+      "--radius-full",
+      "--spacer-16",
+      "--spacer-24",
+      "--spacer-32",
+      "--spacer-48"
+    ],
+    "designDecisionSummary": "TraeWork Light: clean neutral surfaces, restrained brand purple (#4b3fe3), type-first hierarchy, 14px body baseline, 8/12px radius, SF Pro / PingFang SC typography, local SVG icons via currentColor masks.",
+    "componentIndexSummary": [
+      "buttons",
+      "cards",
+      "forms",
+      "menu",
+      "pagination",
+      "table",
+      "tabs",
+      "tag",
+      "alert",
+      "avatar",
+      "breadcrumb",
+      "dialog",
+      "progress",
+      "skeleton"
+    ],
+    "uiKitSummary": "Dashboard / skills-library / dev-explorer UI kits provide layout benchmarks for the learning app.",
+    "allowedComponents": [
+      "alert",
+      "avatar",
+      "breadcrumb",
+      "buttons",
+      "cards",
+      "dialog",
+      "forms",
+      "menu",
+      "pagination",
+      "progress",
+      "skeleton",
+      "table",
+      "tabs",
+      "tag"
+    ],
+    "forbiddenInventedComponents": []
+  },
+  "iconAssets": {
+    "source": "assets/icons",
+    "projectIconDir": "assets/icons/traework",
+    "libraryKey": "traework",
+    "renderMethod": "css-mask",
+    "pathTemplate": "../assets/icons/traework/{name}.svg",
+    "availableNames": [
+      "home",
+      "search",
+      "user",
+      "setting",
+      "chevron-right",
+      "chevron-down",
+      "check",
+      "plus",
+      "star",
+      "notification",
+      "help",
+      "menu",
+      "close",
+      "moon",
+      "sun"
+    ],
+    "totalCount": 671,
+    "coloringRule": "currentColor by default; override with Library token when needed"
+  }
+}

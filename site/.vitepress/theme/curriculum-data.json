@@ -1,0 +1,140 @@
+{
+  "profile": {
+    "student_name": "Elias",
+    "grade": "高二上学期",
+    "exam_region": "新高考全国I卷",
+    "target_score_band": "目标 85-95 分",
+    "learning_style": "直观物理图景型",
+    "weak_subjects": [
+      "物理",
+      "数学",
+      "语文"
+    ],
+    "priorities": [
+      "高中物理·动力学两类基本问题与受力分析",
+      "高中数学·导数单调性与极值构造模型",
+      "高考语文·古诗文鉴赏与论述文本规范踩分"
+    ],
+    "weakness_tags": [
+      "物理：动力学受力分析与摩擦力临界模型",
+      "数学：导数切线与函数单调性构造",
+      "语文：古诗文鉴赏与论述类文本踩分",
+      "规范大题步骤与防审题遗漏"
+    ]
+  },
+  "dueMistakesCount": 1,
+  "subjects": [
+    {
+      "id": "chemistry-water-ionization",
+      "title": "高中化学：水的电离平衡与溶液酸碱性",
+      "category": "高中新课标必修/选必",
+      "status": "ongoing",
+      "statusText": "进行中",
+      "statusClass": "status-ongoing",
+      "isExpanded": true,
+      "progressPercent": 16,
+      "masteryPercent": 20,
+      "syllabusMasteryPercent": 7,
+      "completedNodes": 0,
+      "currentNode": "水的电离平衡与离子积常数Kw",
+      "nodes": [
+        {
+          "id": "water.ionization-kw",
+          "title": "水的电离平衡与离子积常数Kw",
+          "kind": "概念",
+          "objective": "掌握水的微弱电离过程，理解离子积常数Kw定义与温度唯一决定性",
+          "status": "学习中",
+          "mastery": 0.2,
+          "prerequisites": [],
+          "lessonLink": "/subjects/chemistry-water-ionization/lessons/water.ionization-kw"
+        },
+        {
+          "id": "water.equilibrium-shift",
+          "title": "外界条件对水电离平衡的影响与计算",
+          "kind": "模型",
+          "objective": "掌握温度、酸、碱、盐对水电离平衡移动方向的判断与水电离离子浓度计算",
+          "status": "未开始",
+          "mastery": 0.0,
+          "prerequisites": [
+            "water.ionization-kw"
+          ],
+          "lessonLink": ""
+        },
+        {
+          "id": "water.ph-and-neutrality",
+          "title": "溶液酸碱性本质与pH核心辨析",
+          "kind": "母题",
+          "objective": "掌握中性本质c(H+)=c(OH-)，破除常温定势，攻克pH母题",
+          "status": "未开始",
+          "mastery": 0.0,
+          "prerequisites": [
+            "water.equilibrium-shift"
+          ],
+          "lessonLink": ""
+        }
+      ]
+    },
+    {
+      "id": "physics-dynamics",
+      "title": "高考物理·牛顿运动定律与动力学应用",
+      "category": "高中新课标必修/选必",
+      "status": "ongoing",
+      "statusText": "进行中",
+      "statusClass": "status-ongoing",
+      "isExpanded": true,
+      "progressPercent": 12,
+      "masteryPercent": 50,
+      "syllabusMasteryPercent": 12,
+      "completedNodes": 0,
+      "currentNode": "规范受力分析",
+      "nodes": [
+        {
+          "id": "dynamics.force-analysis",
+          "title": "规范受力分析",
+          "kind": "概念",
+          "objective": "掌握隔离法与整体法，画出规范受力矢量图",
+          "status": "学习中",
+          "mastery": 0.5,
+          "prerequisites": [],
+          "lessonLink": "/subjects/physics-dynamics/lessons/dynamics.force-analysis"
+        },
+        {
+          "id": "dynamics.newton-second-law",
+          "title": "牛顿第二定律",
+          "kind": "模型",
+          "objective": "掌握矢量性与瞬时性，熟练运用正交分解列方程",
+          "status": "未开始",
+          "mastery": 0.0,
+          "prerequisites": [
+            "dynamics.force-analysis"
+          ],
+          "lessonLink": ""
+        },
+        {
+          "id": "dynamics.inclined-plane-slider",
+          "title": "斜面滑块母题",
+          "kind": "母题",
+          "objective": "攻克动力学两类基本问题与临界滑动极值",
+          "status": "未开始",
+          "mastery": 0.0,
+          "prerequisites": [
+            "dynamics.newton-second-law"
+          ],
+          "lessonLink": ""
+        },
+        {
+          "id": "dynamics.experiment-atwood",
+          "title": "探究加速度实验",
+          "kind": "实验",
+          "objective": "掌握控制变量法与平衡摩擦力、消除系统误差",
+          "status": "未开始",
+          "mastery": 0.0,
+          "prerequisites": [
+            "dynamics.newton-second-law"
+          ],
+          "lessonLink": ""
+        }
+      ]
+    }
+  ]
+}

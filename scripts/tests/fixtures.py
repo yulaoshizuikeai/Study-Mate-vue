@@ -22,6 +22,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+if sys.platform == 'win32':
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
+
 TESTS_DIR = Path(__file__).resolve().parent
 REPO = TESTS_DIR.parents[1]
 GATE = REPO / 'scripts' / 'check_lesson.py'
@@ -233,8 +240,9 @@ def write_quiz(subject, number, node_id, mapping):
 def run_render(subject, node_id, *args):
     """跑渲染器（`scripts/render_lesson.py`），返回 (exit_code, 输出)。"""
     proc = subprocess.run([sys.executable, str(RENDER), str(subject), node_id, *args],
-                          capture_output=True, text=True)
-    return proc.returncode, proc.stdout + proc.stderr
+                          capture_output=True, text=True, encoding='utf-8', errors='replace')
+    out = (proc.stdout or '') + (proc.stderr or '')
+    return proc.returncode, out
 
 
 def lesson_html(subject, number, node_id):
@@ -249,16 +257,23 @@ def lesson_md(subject, number, node_id):
 
 def run_gate(path, subject, node):
     """跑检查，返回 (exit_code, 输出)。"""
+    env = os.environ.copy()
+    env['PYTHONUTF8'] = '1'
     proc = subprocess.run([sys.executable, str(GATE), str(path), '--subject', str(subject), '--node', node],
-                          capture_output=True, text=True)
-    return proc.returncode, proc.stdout + proc.stderr
+                          capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
+    out = (proc.stdout or '') + (proc.stderr or '')
+    return proc.returncode, out
 
 
 def run_pool(subject):
     """跑图片库校验器（`scripts/check_pool.py`），返回 (exit_code, 输出)。"""
+    env = os.environ.copy()
+    env['PYTHONUTF8'] = '1'
     proc = subprocess.run([sys.executable, str(POOL_CHECK), str(subject)],
-                          capture_output=True, text=True)
-    return proc.returncode, proc.stdout + proc.stderr
+                          capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
+    out = (proc.stdout or '') + (proc.stderr or '')
+    return proc.returncode, out
+
 
 
 def check(label, ok, detail=''):

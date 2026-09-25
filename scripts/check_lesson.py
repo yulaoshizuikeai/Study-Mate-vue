@@ -79,6 +79,8 @@ import os
 import re
 import sys
 from html.parser import HTMLParser
+from urllib.parse import unquote
+
 if sys.platform == 'win32':
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -272,14 +274,20 @@ def check_lab(text, path, subject, node):
         return problems, notes
 
     if kind in ('实操', '实验'):
-        if not has_link:
-            problems.append(f'{kind}课缺少实操引用：节点 {node} 的 kind 是「{kind}」，'
-                            '页面里必须有 href 指向 lab/ 的链接')
+        has_lab_dir = os.path.isdir(os.path.join(subject.dir, 'lab'))
+        if kind == '实操' or has_lab_dir:
+            if not has_link:
+                problems.append(f'{kind}课缺少实操引用：节点 {node} 的 kind 是「{kind}」，'
+                                '页面里必须有 href 指向 lab/ 的链接')
+                return problems, notes
+            number = lab_number_of(path)
+            if number is not None:
+                problems += check_lab_artifacts(subject.dir, number)
             return problems, notes
-        number = lab_number_of(path)
-        if number is not None:
-            problems += check_lab_artifacts(subject.dir, number)
-        return problems, notes
+        else:
+            notes.append(f'实验课未链接外部 lab：按高中理科探究课处理（内嵌实验装置与误差分析）')
+            return problems, notes
+
 
     if kind not in ('概念', '模型', '母题'):
         notes.append(f'节点 {node} 的 kind 是 {kind!r}，不在「概念/模型/母题/实操/实验」里——按概念课处理')

@@ -36,6 +36,13 @@ import sys
 import tempfile
 from pathlib import Path
 
+if sys.platform == 'win32':
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
+
 try:
     import yaml
 except ImportError:                                   # pragma: no cover - 环境缺 pyyaml

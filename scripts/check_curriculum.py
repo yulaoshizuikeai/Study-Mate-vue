@@ -33,6 +33,12 @@ SCHEMA_PATH = ROOT / "schemas" / "curriculum.schema.json"
 
 
 def main(argv: list[str]) -> int:
+    if sys.platform == 'win32':
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        if hasattr(sys.stderr, 'reconfigure'):
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
     if len(argv) < 2:
         print(__doc__)
         return 2
@@ -41,7 +47,8 @@ def main(argv: list[str]) -> int:
     failed = False
 
     for arg in argv[1:]:
-        path = Path(arg).resolve()
+        raw_path = Path(arg).resolve()
+        path = raw_path / "curriculum.yaml" if raw_path.is_dir() else raw_path
         print(f"=== {path} ===")
         if not path.is_file():
             print(f"  [ERROR] 文件不存在")

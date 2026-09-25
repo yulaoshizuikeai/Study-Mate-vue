@@ -1,146 +1,129 @@
-# StudyMate-HighSchool (高中学霸版)
+# StudyMate-HighSchool
 
-<p align="center">
-  <b>你的 AI 高中学霸伴学助手：规划考纲、透彻讲法、矢量图解、母题踩分、错因归因</b>
-</p>
+这项目最初是从原版 [StudyMate](https://github.com/Miaotofu01/Study-Mate) 改造过来的。
 
-<p align="center">
-  <img src="https://img.shields.io/badge/version-v1.0-1c5a40" alt="版本 v1.0">
-  <img src="https://img.shields.io/badge/Google-Antigravity-4285F4" alt="Antigravity">
-  <img src="https://img.shields.io/badge/OpenCode-Supported-green" alt="OpenCode">
-  <img src="https://img.shields.io/badge/DSH-Preset-1c5a40" alt="DSH">
-  <img src="https://img.shields.io/badge/python-3.9%2B-3776ab" alt="Python">
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License">
-</p>
+原版主要是给大学自学计算机、写代码跑单元测试用的。但我自己是个高二理科生（新高考全国 I 卷），拿它来自学高中物理、数学、化学的时候，发现逻辑完全对不上——高中理科哪有那么多代码要跑？高中生平时学理科，核心需求其实就这几样：
+1. **看直观图景**：受力分析、运动轨迹、电磁场线、几何模型，图看不清或者图不对题，推导就全白费；
+2. **拆解典型模型**：板块模型、传送带、电磁感应双棒、导数切线、离子平衡等高考高频母题套路；
+3. **按高考踩分点自测**：大题写了一大堆，到底哪几步给分、哪几步是废话、扣分点在哪；
+4. **真实错因复盘**：到底是因为审题看漏条件（比如“光滑”、“恰好”）、概念记混、模型套错，还是单纯计算算错了。
+
+所以趁着这几天，我把原来的架构彻底重构了一遍，去掉了所有无关的古早代码，做成了一个真正适合高中自学的极简伴学系统。
 
 ---
 
-## 🌟 为什么做高中版？
+## 做了哪些改动
 
-原版 [StudyMate](https://github.com/Miaotofu01/Study-Mate) 专为大学与编程自学（高等数学、线性代数、C++、API实操）设计，核心是“写代码跑自动化测试”。然而**高中学段（特别是高考物理、数学、化学等理科）的学习逻辑完全不同**：
+### 1. 彻底干掉旧版 Python HTML 拼接，换成 VitePress + Vue 3
+- 原先是用 Python 正则去硬拼一堆静态 HTML 模版，维护起来很痛苦，排版还经常崩。
+- 现在直接换成了 **VitePress + Vue 3 交互组件**：
+  - 本地跑起来毫秒级热更新，打开 `http://localhost:5173` 就是一个干净纯粹的学习站；
+  - 数学物理公式全用 KaTeX 原生渲染，不用再忍受公式乱码或排版错位；
+  - 做了个模仿 Bento 风格的简洁总览看板（`<StudyMateDashboard>`），实时汇总我的高二学情画像、当前正在进行的知识点、前置依赖卡片和艾宾浩斯复盘雷达，拒绝花里胡哨的营销词和一堆莫名其妙的 emoji。
 
-| 学习维度 | 原版 (大学/编程版) | StudyMate-HighSchool (高中学霸版) |
-| :--- | :--- | :--- |
-| **学科侧重** | 编程语言、全栈开发、高数线代 | **高考物理、高中数学、高中化学、生物等全科** |
-| **课型体系** | 概念课 / 实操课 (写代码) / 实验课 (项目验收) | **概念基石课** / **经典模型课** / **典型母题课** / **实验探究课** |
-| **可视化图解** | 网页图片抓取（理科图经常图不对题或断链） | **精准标准矢量图 (`svg-diagrammer`)**：自研规范受力分析、轨迹、场线、光路矢量图 |
-| **公式排版** | 纯文本 / 简陋符号 | **KaTeX 极速公式渲染**：居中大定理与行内物理量教科书级排版 |
-| **评估机制** | 运行单元测试跑绿 | **高考大题分步踩分自测** + **四大认知错因归因（审题/概念/模型/计算）** |
-| **智能体生态** | 仅绑定 DSH 终端 | **原生支持 Google Antigravity + OpenCode + DSH 三重全平台** |
+### 2. 拒绝找网图，全部现场生成标准矢量图 (`SVG`)
+高中理科最怕抓网上的图，要么搜出来的图不对题，要么糊得看不清坐标轴。
+现在所有受力分析、光路图、运动轨迹，全由智能体严格按照高中物理几何规范生成标准矢量 SVG 代码。配合自定义的 `<SvgViewer>` 组件，支持防塌陷渲染、点击放大和全屏查看细节。
+
+### 3. 高考大题分步踩分自测与四大错因归因
+- **选择题 (`<QuizCard>`)**：做完即时对答案，关键是做错之后能直接勾选你的错因类别：
+  - `[审题遗漏]`：漏看关键条件（如轻绳、光滑、恰好、不计重力）；
+  - `[概念混淆]`：定理定律适用前提搞混；
+  - `[模型套错]`：生搬硬套不符合条件的二级结论；
+  - `[计算失误]`：正负号搞反、算错数、漏写单位。
+  - 这些错题会自动沉淀到本地 `misconceptions.yaml` 里，后续复盘时按遗忘曲线重新抓出来练。
+- **大题踩分卡 (`<StepScoreCard>`)**：还原高考阅卷评分细则，把解答过程拆成具体步骤分，自己逐项勾选采分点，算真实得分率并标出避坑注意点。
 
 ---
 
-## 🚀 极速上手
+## 怎么跑起来
 
-### 方式一：在 Google Antigravity 中使用（强烈推荐）
+### 环境要求
+- Node.js (v18+)
+- Python (3.9+)
 
-当前界面就是 Antigravity！只需在本项目根目录下运行一键注册脚本：
+### 1. 安装依赖
+```bash
+npm install
+```
 
+### 2. 启动本地伴学页面
+```bash
+npm run dev
+```
+打开 `http://localhost:5173` 就能看到学习大厅和所有学科课件。
+
+平时学完新内容、或者让 AI 生成了新课件和大纲后，如果页面没刷新，跑一下这个同步命令就行：
+```bash
+npm run sync
+```
+
+想要打出完整的离线静态 HTML：
+```bash
+npm run build
+```
+
+---
+
+## 怎么搭配智能体学习
+
+本项目原生适配了主流的 AI Agent 环境（Google Antigravity、OpenCode、DSH 等）：
+
+### 在 Google Antigravity 中使用（推荐）
+在当前根目录下运行：
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install-antigravity.ps1
 ```
-*(macOS / Linux: `./install-antigravity.sh`)*
+然后在聊天框里直接用平时打字的口吻跟它交流就行，比如：
+- *“我想学高考物理牛顿运动定律中的滑块木板模型”*
+- *“帮我推导一下倾角为 $\theta$ 的斜面受力分析，画个受力图”*
+- *“考我一道化学水溶液离子浓度大小排序的典型母题，出完按踩分点评分”*
+- *“看下我昨天的错题本，帮我挑两道容易模型套错的变式题练练”*
 
-**开启学习**：
-安装完成后，在 Antigravity 聊天框中直接输入任意你想学的课题即可：
-> *“我想学高考物理牛顿第二定律”*
-> *“考考我带电粒子在匀强磁场中的圆周偏转”*
-> *“复盘一下我昨天的物理错题本”*
+生成的课件与图解会在右侧实时渲染，同时自动同步进本地 VitePress 站点。
 
-💡 **Antigravity 独家体验**：
-生成的课件、知识路线图和高清受力分析 SVG 图，会**直接在 Antigravity 右侧 Artifacts（画板）并排实时渲染**，一边聊一边学，体验极其丝滑！
-
----
-
-### 方式二：在 OpenCode 终端中使用
-
-在项目根目录下一键安装到 OpenCode：
-
+### 在 OpenCode 中使用
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install-opencode.ps1
 ```
-*(macOS / Linux: `./install-opencode.sh`)*
-
-**在 OpenCode 中开箱即用的快捷指令**：
-- `/study [科目] [考点]`：开启新考点系统性自学（如 `/study 高中物理 动力学两类问题`）
-- `/quiz [考点]`：现场生成一道高考母题变式并按踩分点评分
-- `/mistakes`：查看错题本并进行靶向变式训练
-- `/roadmap`：调阅学科分层依赖知识路线图
+支持的快捷指令：
+- `/study [科目] [考点]`：开启一个新考点的系统性学习
+- `/quiz [考点]`：生成一道高考母题变式与踩分测试
+- `/mistakes`：查看错题本并进行针对性复盘
+- `/roadmap`：查看当前学科的知识点依赖路线图
 
 ---
 
-### 方式三：在 DSH (DeepSeek Harness) 中使用
-
-完全保留原版兼容性，原生支持 `dsh web`：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
-dsh web
-```
-
----
-
-## 🌐 浏览离线 Web 知识库与路线图
-
-无论你使用哪种 Agent 伴学，所有大纲路线图和交互课件都会持久化保存为精美的离线 HTML。随时在项目根目录运行：
-
-```bash
-npm run serve
-```
-*(或者 `py -3 scripts/serve.py`)*
-
-浏览器将自动弹出，带你浏览：
-1. **课程总览大厅 (`index.html`)**：透明看板娘、多学科卡片、学习进度罗盘。
-2. **学科路线图 (`subject/index.html`)**：分层依赖知识图谱、节点状态动态着色（未开始/学习中/能独立应用/需复习）、点击节点原地展开课件卡片。
-3. **互动课件 (`lesson.html`)**：侧边目录 TOC、深浅护眼主题切换、高清 SVG 受力矢量图解、内嵌即时判分选择题与高考大题踩分展开卡。
-
----
-
-## 📁 项目目录结构
+## 目录结构速览
 
 ```text
 StudyMate-HighSchool/
-├── skills/                       # 12 大标准化核心技能 (标准 SKILL.md)
-│   ├── learning-system/          # 高中自学系统总控引擎
-│   ├── curriculum-designer/      # 高中新课标知识图谱与依赖树架构师
-│   ├── lesson-design/            # 高中名师精讲课件设计（含二级结论与避坑警示）
-│   ├── svg-diagrammer/           # 高中理科标准矢量图解生成器 (SVG)
-│   ├── practice-evaluator/       # 高考母题与大题步骤踩分评估器
-│   ├── record-keeping/           # 学情档案与错题漏洞追踪管家
-│   ├── evidence-check/           # 数理逻辑严谨性核验
-│   └── ...
-├── .agents/                      # Google Antigravity 工作区与规则集成
-│   ├── rules/
-│   │   ├── pedagogy-standards.md # 名师教学与踩分标准规范
-│   │   ├── svg-diagrams.md       # 矢量物理图解设计规范
-│   │   └── error-taxonomy.md     # 四大认知错因归因体系
-│   └── skills/                   # Antigravity 技能链接
-├── .opencode/                    # OpenCode 工作区与指令集成
-│   ├── commands/                 # /study, /quiz, /mistakes, /roadmap
-│   └── skills/
-├── templates/                    # 高中学霸课件样式与基础模版 (Sayo UI + KaTeX)
-│   ├── home-index.html           # 课程总览主页模板 (看板娘 + 进度条)
-│   ├── subject-index.html        # 知识路线图主页模板
-│   ├── lesson.html               # 互动式课件模板
-│   └── assets/                   # 极简护眼主题、Quiz交互与图标库
-├── scripts/                      # 核心脚本
-│   ├── render_lesson.py          # 课件渲染器 (Markdown + Quiz -> 交互HTML)
-│   ├── gen_home.py               # 主页与大纲知识图谱渲染器
-│   └── serve.py                  # 本地极速 Web 预览服务
-├── workspace/                    # 你的自学工作区 (学习数据集中营，完全独立)
-│   ├── index.html                # 根主页
+├── site/                     # VitePress 伴学网站源码
+│   ├── .vitepress/           # 站点配置、主题与 Vue 交互组件
+│   │   ├── config.mts
+│   │   └── theme/
+│   │       ├── components/   # QuizCard、StepScoreCard、SvgViewer、StudyMateDashboard
+│   │       └── index.ts
+│   ├── subjects/             # 各学科同步后的文档与课件
+│   └── index.md              # 首页看板
+├── workspace/                # 个人学习工作区（数据完全归你本地所有）
 │   └── .learning/
-│       ├── MEMORY.md             # 跨学科共享记忆
-│       └── subjects/             # 各学科目录
-├── install-antigravity.ps1        # Antigravity 一键安装脚本
-├── install-opencode.ps1           # OpenCode 一键安装脚本
-├── install.ps1                   # DSH 一键安装脚本
+│       ├── profile.yaml      # 个人学情档案（年级、考区、薄弱点）
+│       ├── MEMORY.md         # 学习习惯与跨学科记忆
+│       └── subjects/         # 学科知识大纲 (curriculum.yaml)、题库与错题记录
+├── .agents/                  # Google Antigravity 智能体规则与技能配置
+├── skills/                   # 各智能体专业技能定义
+├── scripts/                  # 轻量辅助脚本
+│   ├── sync_to_vitepress.py  # 大纲/课件/题库同步到 VitePress 的数据桥梁
+│   ├── check_curriculum.py   # 大纲依赖 DAG 无环性校验
+│   └── spaced_review.py      # 艾宾浩斯复盘算法
+├── install-antigravity.ps1   # Antigravity 注册脚本
+├── install-opencode.ps1      # OpenCode 注册脚本
 └── package.json
 ```
 
 ---
 
-## 📄 开源许可
+## License
 
-本项目遵循 [MIT License](LICENSE)。
-部分前端组件与图标来源于 Sayo UI (MIT License)。
+MIT License.

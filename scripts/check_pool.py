@@ -32,6 +32,13 @@ import re
 import sys
 from datetime import date
 
+if sys.platform == 'win32':
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
+
 INDEX_REL = os.path.join('assets', 'img', 'pool.md')
 POOL_REL = os.path.join('assets', 'img', 'pool')
 

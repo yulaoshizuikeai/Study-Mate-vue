@@ -10,21 +10,29 @@
 <link rel="stylesheet" href="../../../assets/learn-theme.css">
 <link rel="stylesheet" href="../assets/style.css">
 
-<!-- KaTeX 数学物理公式支持 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<!-- KaTeX 数学物理公式支持：dist 已本地化到 .learning/assets/katex/（离线可用、与 CDN 口径一致）。
+     mhchem 提供 \ce{} 化学式宏，必须排在 katex.min.js 之后（defer 保持文档序执行）。 -->
+<link rel="stylesheet" href="../../../assets/katex/katex.min.css">
+<script defer src="../../../assets/katex/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="../../../assets/katex/contrib/mhchem.js" crossorigin="anonymous"></script>
+<script defer src="../../../assets/katex/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script>
   function renderAllMath() {
     if (window.renderMathInElement) {
+      document.documentElement.setAttribute('data-math', 'ready');
       renderMathInElement(document.body, {
         delimiters: [
           {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
           {left: '$', right: '$', display: false}
         ],
         ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        ignoredClasses: ["katex", "lesson-code__copy"],
         throwOnError: false
       });
+    } else {
+      document.documentElement.setAttribute('data-math', 'off');
     }
   }
   document.addEventListener("DOMContentLoaded", renderAllMath);
@@ -52,6 +60,11 @@
     </span>
   </label>
 </nav>
+
+<!-- 阅读进度条：贴视口顶部，transform 缩放（不触发重排） -->
+<div class="lesson-progress" role="progressbar" aria-label="阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+  <div class="lesson-progress__bar"></div>
+</div>
 
 <article class="lesson">
 
@@ -135,6 +148,24 @@
 
   <p>在倾角为 $\theta$ 的斜面上，建立直角坐标系的最佳原则是：<b>沿斜面方向为 x 轴，垂直斜面方向为 y 轴</b>。</p>
 
+  <details class="lesson-scaffold lesson-scaffold--base" open>
+    <summary class="lesson-scaffold__summary">
+      <span class="lesson-scaffold__badge">基础支架</span>
+      <b>基础补给包·三角函数投影极速记忆法</b>
+    </summary>
+    <div class="lesson-scaffold__content">
+      <ul>
+        <li>若倾角为 $\theta$，重力 $mg$ 为直角三角形的斜边：
+          <ul>
+            <li>沿斜面向下的分力（对边）：$G_x = mg \sin\theta$；</li>
+            <li>垂直斜面向下的分力（邻边）：$G_y = mg \cos\theta$。</li>
+          </ul>
+        </li>
+        <li>极速口诀：<b>沿斜面正弦 $\sin$，垂直斜面余弦 $\cos$</b>。极限检验：当 $\theta \to 0$（水平面）时，$\sin 0 = 0$ 无下滑分力，$\cos 0 = 1$ 正压力刚好等于重力。</li>
+      </ul>
+    </div>
+  </details>
+
   <p>将竖直向下的重力 $G$ 正交分解：</p>
 
   <ul>
@@ -155,6 +186,23 @@
     <b>二级结论：斜面静止临界角</b>
     <p>若斜面与滑块间的静摩擦因数为 $\mu$，当倾角 $\theta$ 缓慢增大时，滑块恰好要开始下滑的临界状态满足： $$\mu mg \cos\theta = mg \sin\theta \implies \tan\theta = \mu$$ 即临界角 $\theta = \arctan\mu$。无论物体质量多大，只要 $\tan\theta \le \mu$，物体放在斜面上必保持静止！</p>
   </div>
+
+  <details class="lesson-scaffold lesson-scaffold--advance" open>
+    <summary class="lesson-scaffold__summary">
+      <span class="lesson-scaffold__badge">压轴拔高</span>
+      <b>高考压轴拔高·微元法与曲面斜坡冲量通法</b>
+    </summary>
+    <div class="lesson-scaffold__content">
+      <ul>
+        <li>若滑道不是平直斜面，而是任意光滑曲面 $y=f(x)$：
+          <ul>
+            <li>支持力 $F_N$ 的方向随切线倾角 $\theta$ 动态变化，无法直接用 $F_N \cdot t$ 求冲量；</li>
+            <li>必须采用<b>水平方向动量投影法</b>：由于水平方向无外力或只有特定外力，利用动量守恒或微元积分 $\int N_x dt = \Delta p_x$ 进行系统级化简，这是新高考压轴题规避繁琐列式的核心通法！</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </details>
 
   <div class="lesson-warn">
     <b>易错警示：下滑力陷阱</b>
@@ -204,7 +252,165 @@
 
 </article>
 
+<!-- ── 划词即时伴学快捷气泡 (Selection Popover) ── -->
+<div id="selection-popover" class="lesson-selection-popover">
+  <button class="lesson-popover-btn" data-action="explain">🔍 帮我讲透</button>
+  <button class="lesson-popover-btn" data-action="derive">📐 步骤推导</button>
+  <button class="lesson-popover-btn" data-action="analogy">💡 生活类比</button>
+  <button class="lesson-popover-btn" data-action="pitfall">⚠️ 避坑警示</button>
+</div>
+
+<!-- ── AI 伴学浮动呼出按钮 ── -->
+<button class="tutor-drawer-toggle" id="tutor-toggle-btn" aria-label="打开 AI 伴学助手">
+  <span>🎓 AI 伴学答疑</span>
+</button>
+
+<!-- ── 返回顶部按钮 ── -->
+<button class="lesson-top-btn" id="lesson-top-btn" aria-label="返回顶部" aria-hidden="true" tabindex="-1">
+  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 16V5m0 0L5.5 9.5M10 5l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<!-- ── AI 伴学抽屉 ── -->
+<aside class="lesson-tutor-drawer" id="tutor-drawer" aria-label="AI 伴学抽屉">
+  <div class="lesson-tutor-drawer__header">
+    <h3><span>🤖 高中学霸伴学助手</span></h3>
+    <button class="lesson-tutor-drawer__close" id="tutor-drawer-close" aria-label="关闭伴学抽屉">✕</button>
+  </div>
+  <div class="lesson-tutor-drawer__body" id="tutor-drawer-body">
+    <div class="tutor-context-card">
+      <small>随时为你答疑</small>
+      <b>在正文中划选任意文字、公式或受力图，即可一键生成精准提问！</b>
+    </div>
+    <div style="color: var(--syo-fg-muted); font-size: 0.8125rem;">
+      摆脱录播网课无人即时答疑的苦恼。无论是物理模型的受力分解、公式临界前提，还是计算大题的踩分依据，伴学助手随时在线。
+    </div>
+  </div>
+  <div class="lesson-tutor-drawer__footer">
+    <div class="tutor-copy-box">
+      <textarea id="tutor-prompt-input" placeholder="选中文本即可自动生成提问 Prompt..."></textarea>
+      <button class="tutor-copy-btn" id="tutor-action-btn">复制精准提问 Prompt</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   课件壳行为（不依赖 Sayo，关掉 JS 也不影响阅读）：
+   ① 阅读进度条 ② 返回顶部 ③ 展示公式点击放大 ④ 代码块复制按钮
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ① 阅读进度条：rAF 节流，transform 缩放 */
+  var progress = document.querySelector('.lesson-progress');
+  var bar = document.querySelector('.lesson-progress__bar');
+  if (progress && bar) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var p = max > 0 ? Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop) / max)) : 0;
+      bar.style.transform = 'scaleX(' + p + ')';
+      progress.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(function () { updateProgress(); ticking = false; });
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+  }
+
+  /* ② 返回顶部：滚动过一屏后出现 */
+  var topBtn = document.getElementById('lesson-top-btn');
+  if (topBtn) {
+    var visible = false;
+    window.addEventListener('scroll', function () {
+      var show = (window.scrollY || document.documentElement.scrollTop) > 640;
+      if (show !== visible) {
+        visible = show;
+        topBtn.classList.toggle('is-visible', show);
+        topBtn.setAttribute('aria-hidden', show ? 'false' : 'true');
+        topBtn.tabIndex = show ? 0 : -1;
+      }
+    }, { passive: true });
+    topBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      var h1 = document.querySelector('.lesson-header h1');
+      if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
+    });
+  }
+
+  /* ③ 展示公式点击放大：移动端看长公式用。quiz.js 动态渲染的公式也能吃到（事件委托） */
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('.katex-display') : null;
+    if (!el || el.closest('.quiz__code')) return;
+    if (!el.title) el.title = '点击放大 / 还原';
+    el.classList.toggle('is-zoomed');
+  });
+
+  /* ④ 代码块复制按钮：正文与 quiz.js 动态生成的代码块都包一层 */
+  var COPY_SVG = '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 5.5A1.5 1.5 0 0011.5 4H5.5A1.5 1.5 0 004 5.5v6A1.5 1.5 0 005.5 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  function addCopyButtons() {
+    var pres = document.querySelectorAll('.lesson pre:not([data-copy-ready])');
+    Array.prototype.forEach.call(pres, function (pre) {
+      pre.setAttribute('data-copy-ready', '1');
+      var wrap = document.createElement('div');
+      wrap.className = 'lesson-code';
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'lesson-code__copy';
+      btn.setAttribute('aria-label', '复制代码');
+      btn.innerHTML = COPY_SVG + '<span>复制</span>';
+      btn.addEventListener('click', function () {
+        var text = pre.textContent;
+        function done() {
+          btn.innerHTML = COPY_SVG + '<span>已复制</span>';
+          btn.classList.add('is-copied');
+          setTimeout(function () {
+            btn.innerHTML = COPY_SVG + '<span>复制</span>';
+            btn.classList.remove('is-copied');
+          }, 1600);
+        }
+        function legacy() {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { /* 忽略 */ }
+          document.body.removeChild(ta);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, legacy);
+        } else { legacy(); }
+      });
+      wrap.appendChild(btn);
+    });
+  }
+  function stampFormulaTitles() {
+    Array.prototype.forEach.call(document.querySelectorAll('.katex-display'), function (el) {
+      if (!el.title) el.title = '点击放大 / 还原';
+    });
+  }
+  /* DOMContentLoaded 时 quiz.js（defer）已建完题目块；再等一个宏任务兜住异步渲染 */
+  document.addEventListener('DOMContentLoaded', function () {
+    addCopyButtons();
+    stampFormulaTitles();
+    setTimeout(function () { addCopyButtons(); stampFormulaTitles(); }, 0);
+  });
+})();
+</script>
+
 <script src="../../../assets/sayo/sayo.js"></script>
+<script src="../../../assets/tutor.js" defer></script>
 <script src="../assets/quiz.js" defer></script>
 <script src="../assets/lesson-toc.js" defer></script>
 <script>LearnTheme.wire(document.getElementById('lesson-theme-checkbox'));</script>

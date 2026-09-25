@@ -6,523 +6,539 @@
 <meta name="description" content="科目主页：大纲路线图（点击节点展开课件）与附件。">
 <title>高考物理·牛顿运动定律与动力学应用 · 课程主页</title>
 
-<!-- Sayo UI（vendored，MIT）+ 本项目共享主题层。
-     科目页在 .learning/subjects/<slug>/ 下，共享层在 .learning/assets/，所以是 ../../assets/ -->
+<!-- Sayo UI + Notion 风格共享主题层 -->
 <link rel="stylesheet" href="../../assets/sayo/sayo.css">
 <link rel="stylesheet" href="../../assets/learn-theme.css">
 
 <!-- KaTeX 数学物理公式支持 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
-  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+<link rel="stylesheet" href="../../assets/katex/katex.min.css">
+<script defer src="../../assets/katex/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="../../assets/katex/contrib/mhchem.js" crossorigin="anonymous"></script>
+<script defer src="../../assets/katex/contrib/auto-render.min.js" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], ignoredClasses: ['katex'], throwOnError: false});"></script>
 
-<!-- 主题：首帧前应用已保存的主题（共享逻辑在 ../../assets/learn-theme.js，
-     暗色是默认（Sayo 的 Primer 暗色），亮色=我们的暖色系；URL 加 ?theme=light 可临时预览） -->
+<!-- 主题应用 -->
 <script src="../../assets/learn-theme.js"></script>
 <script>LearnTheme.apply();</script>
 
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   科目主页（大纲路线图 + 附件）· 页面专属样式
-   组件来自 Sayo；主题与抬头背景图案在 learn-theme.css。
-   本页样式全部内联：主页是生成产物，生成器只替换 LEARN 数据占位符注释行，
-   其余内容原样保留。
+   Notion 风格科目主页专属样式 (Notion Subject Workspace)
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── 导航栏 ── */
+/* ── 顶部面包屑导航条 ── */
+.learn-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px clamp(16px, 3.5vw, 36px);
+  background: var(--syo-bg-surface);
+  border-bottom: 1px solid var(--syo-border);
+  backdrop-filter: blur(8px);
+}
 .learn-back {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: .875rem;
+  font-size: 0.8125rem;
   color: var(--syo-fg-muted);
   text-decoration: none;
-  transition: color 160ms var(--syo-ease-out);
+  padding: 3px 8px;
+  border-radius: var(--syo-radius-sm);
+  transition: background-color 140ms ease, color 140ms ease;
 }
-.learn-back:hover { color: var(--syo-accent); }
+.learn-back:hover {
+  background: var(--syo-bg-hover);
+  color: var(--syo-fg-default);
+}
 
-/* ── 抬头 ── */
-.learn-hero { position: relative; overflow: hidden; }
-.learn-hero--subject { padding: clamp(30px, 4.5vw, 48px) 0 clamp(22px, 3vw, 30px); }
-.learn-hero__inner { position: relative; z-index: 1; }
-
+/* ── Notion 科目页面头部 ── */
+.learn-hero--subject {
+  padding: clamp(24px, 4vw, 42px) 0 20px;
+}
 .learn-subject-head {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--syo-space-3);
+  gap: 12px;
+  margin-bottom: 12px;
 }
-
+.learn-subject-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  user-select: none;
+  margin-bottom: 8px;
+}
 .learn-subject-title {
   margin: 0;
-  font-size: clamp(24px, 3.4vw, 32px);
-  font-weight: 600;
-  letter-spacing: -.02em;
-  line-height: 1.3;
+  font-size: clamp(1.8rem, 3.6vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  color: var(--syo-fg-default);
+  line-height: 1.25;
+}
+.learn-subject-mission {
+  margin: 0 0 16px;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--syo-fg-muted);
+  max-width: 65ch;
 }
 
-.learn-subject-mission {
-  max-width: 62ch;
-  margin: var(--syo-space-2) 0 0;
-  font-size: .9375rem;
-  line-height: 1.7;
+/* ── 在做的项目 (Notion Callout Block) ── */
+.learn-project {
+  margin-bottom: 28px;
+}
+.learn-project__card {
+  position: relative;
+  padding: 16px 20px 16px 50px;
+  background: var(--notion-tag-blue-bg);
+  border: 1px solid var(--learn-line-blue);
+  border-radius: var(--syo-radius-md);
+}
+.learn-project__card::before {
+  content: "🚀";
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.learn-project__label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--notion-tag-blue-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.learn-project__current {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--syo-fg-default);
+}
+.learn-project__lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 0.8125rem;
+}
+.learn-project__sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--syo-fg-muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.learn-project__card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--syo-fg-default);
+}
+.learn-project__card li {
+  margin-bottom: 3px;
+  line-height: 1.5;
+}
+.learn-project__none {
+  margin: 0;
+  font-size: 0.8125rem;
   color: var(--syo-fg-muted);
 }
 
-/* ── 主体与区块 ── */
-.learn-main { padding-top: 0; }
-
-.learn-section { margin-top: var(--syo-space-8); }
-
+/* ── 路线图头部与概览条 (Roadmap Header & Overview) ── */
+.learn-section {
+  margin-bottom: 36px;
+}
 .learn-section__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--syo-space-2) var(--syo-space-4);
-  padding-bottom: var(--syo-space-3);
-  margin-bottom: var(--syo-space-4);
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--syo-border);
 }
-
-.learn-section__title { margin: 0; font-size: 1.0625rem; font-weight: 600; }
-
+.learn-section__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--syo-fg-default);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
 .learn-section__hint {
-  margin-left: var(--syo-space-2);
-  font-family: var(--syo-font-mono);
-  font-size: .6875rem;
+  font-size: 0.75rem;
   font-weight: 400;
+  font-family: var(--syo-font-mono);
   color: var(--syo-fg-muted);
 }
 
-/* ── 状态概览条（数值由脚本从节点 DOM 统计） ── */
-.learn-overview { display: flex; flex-wrap: wrap; gap: var(--syo-space-3); }
-
+/* 状态概览药丸条 (Notion Overview Tags) */
+.learn-overview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .learn-overview__item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: .75rem;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: var(--syo-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--syo-fg-muted);
+  background: var(--notion-tag-gray-bg);
 }
 .learn-overview__item b {
   font-family: var(--syo-font-mono);
-  font-size: .8125rem;
-  font-weight: 600;
   color: var(--syo-fg-default);
-}
-
-.learn-overview__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--learn-todo); }
-.learn-overview__item--learning .learn-overview__dot { background: var(--learn-learning); }
-.learn-overview__item--done     .learn-overview__dot { background: var(--learn-done); }
-.learn-overview__item--review   .learn-overview__dot { background: var(--learn-review); }
-.learn-overview__item--verified .learn-overview__dot { background: var(--learn-verified); }
-
-/* ── 在做的项目 ── */
-.learn-project { margin-top: var(--syo-space-6); }
-
-.learn-project__card {
-  padding: var(--syo-space-4) var(--syo-space-5);
-  background: var(--syo-bg-surface);
-  border: 1px solid var(--syo-border);
-  border-radius: var(--syo-radius-md);
-}
-
-.learn-project__label {
-  display: block;
-  font-family: var(--syo-font-mono);
-  font-size: .6875rem;
-  letter-spacing: .04em;
-  color: var(--syo-fg-muted);
-}
-
-.learn-project__current { margin: 6px 0 0; font-size: .9375rem; }
-
-.learn-project__lists {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--syo-space-6);
-  margin-top: var(--syo-space-3);
-}
-.learn-project__sub {
-  display: block;
-  font-size: .75rem;
-  color: var(--syo-fg-muted);
-  margin-bottom: 4px;
-}
-.learn-project__lists ul { margin: 0; padding-left: 1.1em; font-size: .8125rem; line-height: 1.9; }
-
-.learn-project__none {
-  margin: 0;
-  padding: var(--syo-space-4) var(--syo-space-5);
-  font-size: .875rem;
-  color: var(--syo-fg-muted);
-  border: 1px dashed var(--syo-border);
-  border-radius: var(--syo-radius-md);
-}
-
-/* ── 大纲路线图：分层卡片 ── */
-.learn-roadmap { display: flex; flex-direction: column; }
-
-.learn-level { display: flex; gap: var(--syo-space-4); }
-
-/* 左侧主脉：把各层串成一条线 */
-.learn-level__rail { position: relative; width: 18px; flex: none; }
-.learn-level__rail::before {
-  content: "";
-  position: absolute;
-  left: 8px; top: 0; bottom: 0;
-  width: 1px;
-  background: var(--syo-border);
-}
-.learn-level:first-child .learn-level__rail::before { top: 13px; }
-.learn-level:last-child .learn-level__rail::before { bottom: calc(100% - 13px); }
-
-.learn-level__dot {
-  position: absolute;
-  left: 4px; top: 8px;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--syo-bg-base);
-  border: 1px solid var(--syo-border);
-}
-
-.learn-level__body { flex: 1; min-width: 0; padding-bottom: var(--syo-space-4); }
-
-.learn-level__label {
-  margin-bottom: var(--syo-space-2);
-  font-family: var(--syo-font-mono);
-  font-size: .6875rem;
-  color: var(--syo-fg-muted);
-}
-
-.learn-level__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-  gap: 10px;
-  /* 关键：默认 stretch 会让同层卡片被最高的一张拉齐，
-     看起来像"一起展开了"——改成 start，每张卡保持自身高度 */
-  align-items: start;
-}
-
-/* ── 节点卡（有课件的可点击展开） ── */
-.learn-node {
-  display: block;
-  padding: 12px 14px;
-  background: var(--syo-bg-surface);
-  border: 1px solid var(--syo-border);
-  border-radius: var(--syo-radius-md);
-  transition: border-color 160ms var(--syo-ease-out), transform 160ms var(--syo-ease-out);
-}
-.learn-node--expandable { cursor: pointer; }
-.learn-node:hover { border-color: var(--syo-accent); transform: translateY(-1px); }
-/* 展开时只给父卡片描边高亮，父卡片本身不长大——长大的是它下面的子卡片组 */
-.learn-slot[open] > .learn-node { border-color: var(--syo-accent); }
-
-/* 卡片不许被内容撑宽：details 是网格项、.learn-node 是它的子块，两层都要 min-width:0，
-   否则标题的 min-content（nowrap 中文串）会把卡片顶出所在列——"标题超出卡片宽度"就是这么来的 */
-.learn-slot, .learn-node { min-width: 0; }
-
-/* 父卡片作为 <summary>：去掉原生三角标记 */
-summary.learn-node { list-style: none; }
-summary.learn-node::-webkit-details-marker { display: none; }
-summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline-offset: 3px; }
-
-.learn-node__row { display: flex; align-items: center; gap: 8px; }
-
-.learn-node__dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--learn-todo); }
-
-.learn-node__title {
-  margin: 0;
-  min-width: 0;
-  /* 标题最多两行：卡片这一行还有课型徽标/状态/箭头，一行放不下 16 字标题；
-     两行比省略号友好，也不至于把卡片撑高（上限由 gen_home.py 的软提醒兜着） */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  font-size: .875rem;
-  font-weight: 600;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.learn-node__now {
-  flex: none;
-  padding: 1px 6px;
-  font-family: var(--syo-font-mono);
-  font-size: .625rem;
-  color: var(--syo-accent);
-  border: 1px solid var(--learn-line-accent);
-  border-radius: 999px;
-}
-
-/* 课型徽标：kind 为「实验」的节点（里程碑验收课）在标题行标出来 */
-.learn-node__kind {
-  flex: none;
-  padding: 1px 6px;
-  font-size: .625rem;
-  color: var(--syo-fg-muted);
-  border: 1px solid var(--syo-border);
-  border-radius: 999px;
-}
-
-.learn-node__status {
-  margin-left: auto;
-  flex: none;
-  font-size: .6875rem;
-  color: var(--syo-fg-muted);
-  white-space: nowrap;
-}
-
-.learn-node__nolesson {
-  margin-left: auto;
-  flex: none;
-  font-size: .6875rem;
-  color: var(--syo-fg-muted);
-  white-space: nowrap;
-}
-
-/* 展开箭头：纯 CSS 画的 V 形，展开时旋转 */
-.learn-node__caret {
-  flex: none;
-  width: 7px;
-  height: 7px;
   margin-left: 2px;
-  margin-right: 3px;
-  border-right: 1.5px solid var(--syo-fg-muted);
-  border-bottom: 1.5px solid var(--syo-fg-muted);
-  transform: rotate(-45deg);
-  transition: transform 180ms var(--syo-ease-out);
 }
-.learn-slot[open] .learn-node__caret { transform: rotate(45deg); }
+.learn-overview__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.learn-overview__item--learning { color: var(--notion-tag-blue-fg); background: var(--notion-tag-blue-bg); }
+.learn-overview__item--done { color: var(--notion-tag-green-fg); background: var(--notion-tag-green-bg); }
+.learn-overview__item--review { color: var(--notion-tag-yellow-fg); background: var(--notion-tag-yellow-bg); }
 
-.learn-node__objective {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  margin: 6px 0 0;
-  font-size: .8125rem;
-  line-height: 1.55;
-  color: var(--syo-fg-muted);
+/* ── Notion 分组大纲路线图 (Grouped Database List) ── */
+.learn-roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.learn-node__foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-
-.learn-node__prereq, .learn-node__chip, .learn-node__mastery, .learn-node__pct { display: inline-flex; }
-
-.learn-node__prereq {
+.learn-level {
+  position: relative;
+}
+.learn-level__label {
   display: flex;
   align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  font-size: .6875rem;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
   color: var(--syo-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+.learn-level__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: 16px;
+  max-width: 960px;
 }
 
-.learn-node__chip {
-  padding: 1px 6px;
-  font-size: .6875rem;
+/* ── 知识点节点卡片 (Notion Database Row Item) ── */
+.learn-node {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+  background: var(--syo-bg-surface);
   border: 1px solid var(--syo-border);
-  border-radius: var(--syo-radius-sm);
-  background: var(--syo-bg-base);
+  border-radius: var(--radius, 14px);
+  box-shadow: var(--learn-shadow-card);
+  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+  user-select: none;
 }
-/* 「无前置」用虚线边框区分，不用 opacity：半透明文字会把对比度压到 2.4:1 */
-.learn-node__chip--none { border-style: dashed; }
+.learn-node:hover {
+  background: var(--syo-bg-surface);
+  border-color: rgba(37, 99, 235, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+html[data-theme="dark"] .learn-node:hover {
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
 
-.learn-node__mastery {
+.learn-slot summary {
+  list-style: none;
+  cursor: pointer;
+}
+.learn-slot summary::-webkit-details-marker {
+  display: none;
+}
+
+/* 节点标题行与折叠三角符号悬挂 (Hanging Toggle Caret) */
+.learn-node__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.learn-node__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--syo-fg-default);
   flex: 1;
-  min-width: 36px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 折叠三角：Notion 风格右侧或悬挂 */
+.learn-node__caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--syo-fg-muted);
+  transition: transform 180ms ease;
+  flex-shrink: 0;
+}
+.learn-node__caret::before {
+  content: "▶";
+  font-size: 0.65rem;
+}
+details[open] > summary .learn-node__caret {
+  transform: rotate(90deg);
+}
+
+/* 节点标签 */
+.learn-node__now {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--syo-radius-sm);
+  background: var(--notion-tag-blue-bg);
+  color: var(--notion-tag-blue-fg);
+  border: 1px solid var(--learn-line-blue);
+}
+.learn-node__status {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: var(--syo-radius-sm);
+  background: var(--notion-tag-gray-bg);
+  color: var(--notion-tag-gray-fg);
+}
+.learn-node__nolesson {
+  font-size: 0.7rem;
+  color: var(--syo-fg-muted);
+  font-style: italic;
+}
+
+.learn-node__objective {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--syo-fg-muted);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+/* 核心探究情境 (Notion Soft Callout) */
+.learn-node__problem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: var(--syo-radius-sm);
+  background: var(--notion-tag-yellow-bg);
+  border: 1px solid rgba(202, 142, 0, 0.22);
+  color: var(--syo-fg-default);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.learn-node__problem-badge {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--notion-tag-yellow-fg);
+  font-size: 0.75rem;
+}
+
+/* 考点概念药丸标签库 (Notion Multi-Select Tags) */
+.learn-node__concepts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0;
+}
+.learn-node__concept-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--syo-radius-full);
+  background: var(--notion-tag-blue-bg);
+  color: var(--notion-tag-blue-fg);
+  border: 1px solid var(--learn-line-blue);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.learn-node__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--syo-fg-muted);
+  padding-top: 10px;
+  margin-top: auto;
+  border-top: 1px solid var(--syo-border-muted);
+}
+.learn-node__prereq {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.learn-node__chip {
+  background: var(--notion-tag-gray-bg);
+  color: var(--notion-tag-gray-fg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+}
+.learn-node__mastery {
+  width: 60px;
   height: 4px;
   background: var(--learn-track);
   border-radius: 999px;
   overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
 }
-.learn-node__mastery i { display: block; height: 100%; background: var(--syo-accent); border-radius: 999px; }
-
+.learn-node__mastery i {
+  display: block;
+  height: 100%;
+  background: var(--syo-accent);
+}
 .learn-node__pct {
   font-family: var(--syo-font-mono);
-  font-size: .6875rem;
-  color: var(--syo-fg-muted);
+  font-weight: 500;
+  margin-left: 6px;
 }
 
-/* ── 展开出来的课件子树：一群子卡片 ──
-   父卡片不变大；它下面长出一组子卡片，用一条竖线串起来。
-   竖线横坐标对齐父卡片的状态点（x=18px），所以看着就是从父节点长出来的。
-   子卡片组整体左内边距 30px → 相对子卡片，竖线在 -12px 处。 */
+/* 展开的子课件列表 (Notion Sub-pages) */
 .learn-node__children {
+  margin-top: 6px;
+  padding: 6px 0 6px 12px;
+  border-left: 2px solid var(--syo-border);
   display: flex;
   flex-direction: column;
+  gap: 4px;
+}
+.learn-child {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  margin-top: 10px;
-  padding-left: 30px;
+  padding: 5px 8px;
+  border-radius: var(--syo-radius-sm);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  color: var(--syo-fg-default);
+  transition: background-color 140ms ease;
+}
+.learn-child:hover {
+  background: var(--syo-bg-hover);
+}
+.learn-child__no {
+  font-family: var(--syo-font-mono);
+  font-size: 0.72rem;
+  color: var(--syo-fg-muted);
+  background: var(--notion-tag-gray-bg);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.learn-child__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.learn-child {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+/* ── 附件列表 (Notion Files & Media List) ────────────────────── */
+.learn-attachments {
+  display: block;
+  max-height: 340px;
+  overflow-y: auto;
   padding: 8px 12px;
   background: var(--syo-bg-surface);
   border: 1px solid var(--syo-border);
-  border-radius: var(--syo-radius-sm);
-  font-size: .8125rem;
-  color: var(--syo-fg-body);
-  text-decoration: none;
-  transition: border-color 140ms var(--syo-ease-out), color 140ms var(--syo-ease-out);
-}
-/* 悬停只改颜色/描边，绝不能用 transform：子卡片一移动，
-   挂在它身上的竖线段与分支圆点会跟着偏，树线就断了 */
-.learn-child:hover { border-color: var(--syo-accent); color: var(--syo-accent); }
-.learn-child:focus-visible { outline: 2px solid var(--syo-accent); outline-offset: 2px; }
-
-/* 竖线：每个子卡片画自己那一段（跨过卡间 8px 间隙），最后一个只画到自身中点 */
-.learn-child::before {
-  content: "";
-  position: absolute;
-  left: -12px;
-  top: -9px;
-  bottom: -9px;
-  width: 1px;
-  background: var(--syo-border);
-}
-.learn-child:first-child::before { top: -16px; }   /* 向上接到父卡片 */
-.learn-child:last-child::before { bottom: 50%; }
-
-/* 肘：竖线拐进子卡片 */
-.learn-child::after {
-  content: "";
-  position: absolute;
-  left: -12px;
-  top: 50%;
-  width: 12px;
-  height: 1px;
-  background: var(--syo-border);
-}
-
-/* 分支圆点：落在竖线上，与外侧大纲的层级点同款 */
-.learn-child__dot {
-  position: absolute;
-  left: -15.5px;
-  top: 50%;
-  width: 7px;
-  height: 7px;
-  margin-top: -3.5px;
-  border-radius: 50%;
-  background: var(--syo-bg-base);
-  border: 1px solid var(--syo-border);
-  transition: border-color 140ms var(--syo-ease-out), background-color 140ms var(--syo-ease-out);
-}
-.learn-child:hover .learn-child__dot { border-color: var(--syo-accent); background: var(--syo-accent); }
-
-.learn-child__no { font-family: var(--syo-font-mono); font-size: .6875rem; color: var(--syo-fg-muted); }
-.learn-child__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-/* 状态着色：只用状态点，不给整卡上底色 */
-.learn-node--learning .learn-node__dot { background: var(--learn-learning); }
-.learn-node--done     .learn-node__dot { background: var(--learn-done); }
-.learn-node--review   .learn-node__dot { background: var(--learn-review); }
-.learn-node--verified .learn-node__dot { background: var(--learn-verified); }
-
-.learn-roadmap__empty,
-.learn-attachments__empty {
-  margin: 0;
-  padding: var(--syo-space-6) var(--syo-space-1);
-  font-size: .875rem;
-  color: var(--syo-fg-muted);
-}
-
-/* ── 附件区：纵向惯性滚动容器 ──
-   Sayo 的 .syo-inertia 默认是横排卡片轨道；附件要竖排，所以这里覆盖
-   （惯性 JS 本身是双轴的，纵向一样有惯性）。
-   滚动区必须"看起来就能滚"，否则用户只会看到一列被截断的附件：
-     · 面板外观（底色 + 描边 + 圆角）—— 和页面内容区分开，像个窗口
-     · 常驻滚动条 —— 一进页面就能看到右侧有滚动条
-     · 底部提示条（sticky）—— 明说"向下滚动查看更多"，滚到底自动隐藏
-     · tabindex=0 —— 键盘也能滚（见下方 HTML），焦点环给可见反馈 */
-.learn-attachments {
-  display: block;
-  max-height: 360px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 4px 10px 0 12px;
-  background: var(--syo-bg-surface);
-  border: 1px solid var(--syo-border);
   border-radius: var(--syo-radius-md);
-  scrollbar-width: thin;
-  scrollbar-color: var(--syo-fg-muted) var(--syo-bg-base);
-  scrollbar-gutter: stable;
-  overscroll-behavior: contain;
-  cursor: grab;
+  box-shadow: var(--learn-shadow-card);
 }
-.learn-attachments:focus-visible { outline: 2px solid var(--syo-accent); outline-offset: 2px; }
-
-/* 常驻滚动条（Chrome/Safari）：一进页面就看得见 */
-.learn-attachments::-webkit-scrollbar { width: 9px; }
-.learn-attachments::-webkit-scrollbar-track { background: var(--syo-bg-base); border-radius: 999px; }
-.learn-attachments::-webkit-scrollbar-thumb {
-  background: var(--syo-fg-muted);
-  border: 2px solid var(--syo-bg-surface);
-  border-radius: 999px;
+.learn-attachments__group + .learn-attachments__group {
+  margin-top: 14px;
 }
-.learn-attachments:hover::-webkit-scrollbar-thumb { background: var(--syo-accent); }
-
-/* 底部提示条：吸在可视区底部；滚到底或内容不足一屏时由脚本隐藏 */
-.learn-attachments__more {
-  position: sticky;
-  bottom: 0;
-  margin: 0 -10px 0 -12px;
-  padding: 20px 12px 8px;
-  background: linear-gradient(to bottom, transparent, var(--syo-bg-surface) 62%);
-  font-family: var(--syo-font-mono);
-  font-size: .6875rem;
-  color: var(--syo-fg-muted);
-  text-align: center;
-  pointer-events: none;
-}
-.learn-attachments.is-end .learn-attachments__more,
-.learn-attachments.is-short .learn-attachments__more { display: none; }
-
-.learn-attachments__group + .learn-attachments__group { margin-top: var(--syo-space-4); }
-
 .learn-attachments__label {
-  margin-bottom: 6px;
   font-family: var(--syo-font-mono);
-  font-size: .6875rem;
-  letter-spacing: .04em;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--syo-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
 }
-
 .learn-attachment {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--syo-space-3);
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--syo-border-muted);
-  color: inherit;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: var(--syo-radius-sm);
+  color: var(--syo-fg-default);
   text-decoration: none;
-  /* 附件行全是链接：禁掉原生"拖链接"（会出幽灵图并抢走拖拽），
-     并禁止拖拽时选中文字——整个面板都要能当拖拽手柄用 */
-  -webkit-user-drag: none;
-  user-select: none;
-  transition: background-color 140ms var(--syo-ease-out), color 140ms var(--syo-ease-out);
+  font-size: 0.84rem;
+  transition: background-color 140ms ease;
 }
-.learn-attachment:hover { background: var(--syo-bg-base); color: var(--syo-accent); }
-.learn-attachment:last-child { border-bottom: 0; }
-
-.learn-attachment__title { font-size: .875rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.learn-attachment:hover {
+  background: var(--syo-bg-hover);
+}
+.learn-attachment__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .learn-attachment__meta {
-  flex: none;
   font-family: var(--syo-font-mono);
-  font-size: .6875rem;
+  font-size: 0.72rem;
+  color: var(--syo-fg-muted);
+}
+.learn-attachments__more {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--syo-fg-muted);
+  font-family: var(--syo-font-mono);
+}
+.learn-attachments.is-end .learn-attachments__more,
+.learn-attachments.is-short .learn-attachments__more {
+  display: none;
+}
+.learn-attachments__empty {
+  margin: 0;
+  padding: 16px;
+  text-align: center;
+  font-size: 0.8125rem;
   color: var(--syo-fg-muted);
 }
 
-/* ── 窄屏 ── */
 @media (max-width: 768px) {
   .learn-level__grid { grid-template-columns: 1fr; }
   .learn-attachment__meta { display: none; }
@@ -533,12 +549,21 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
 <body>
 <a class="learn-skip" href="#learn-content">跳到路线图</a>
 
-<nav class="syo-nav">
-  <span class="syo-nav-brand">
+<!-- 顶部 Figma 风格导航条 -->
+<nav class="learn-nav">
+  <div style="display:flex;align-items:center;gap:12px;">
     <a class="learn-back" href="../../../index.html">← 课程总览</a>
-  </span>
+    <span class="learn-nav-divider" style="opacity:0.4;">/</span>
+    <span style="font-weight:600;color:var(--syo-fg-default);font-size:0.875rem;">高考物理·牛顿运动定律与动力学应用</span>
+  </div>
 
-  <div class="syo-nav-links">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <!-- 距高考倒计时胶囊 -->
+    <div class="figma-countdown" style="display:flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.28);">
+      <div class="pulse-dot" style="width:6px;height:6px;border-radius:50%;background:#F97316;"></div>
+      <span style="font-size:0.75rem;font-weight:600;color:#F97316;font-family:var(--syo-font-mono);">距高考 256 天</span>
+    </div>
+
     <label class="syo-toggle syo-toggle--theme" id="learn-theme-toggle" title="切换深浅主题" aria-label="切换深浅主题">
       <input type="checkbox" id="learn-theme-checkbox" checked>
       <span class="syo-toggle-track"></span>
@@ -547,29 +572,30 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
         <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
       </span>
     </label>
+
+    <!-- 用户信息胶囊 -->
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+      <div style="text-align:right;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--syo-fg-default);">Elias</div>
+        <div style="font-size:0.6875rem;color:var(--syo-fg-muted);">高二上学期 · 新高考I卷</div>
+      </div>
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg, #2563EB 0%, #8B5CF6 100%);display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:700;color:#ffffff;flex-shrink:0;">E</div>
+    </div>
   </div>
 </nav>
 
-<header class="learn-hero learn-hero--subject">
-  <!-- 抬头背景图案（本页不挂视差：视差只开在正文的惯性滚动与课件目录上） -->
-  <span class="learn-hero__grid" aria-hidden="true"></span>
-  <span class="learn-hero__nebula" aria-hidden="true"></span>
-  <span class="learn-hero__stars learn-hero__stars--far" aria-hidden="true"></span>
-  <span class="learn-hero__stars learn-hero__stars--near" aria-hidden="true"></span>
-
-  <div class="syo-container learn-hero__inner">
-    <div class="learn-subject-head">
-      <h1 class="learn-subject-title">高考物理·牛顿运动定律与动力学应用</h1>
-      <span class="syo-tag learn-status learn-status--active">进行中<span class="syo-tag-dot syo-tag-dot--blue"></span></span>
-    </div>
-    <p class="learn-subject-mission">动力学是整个高中物理的承重墙。</p>
+<header class="syo-container learn-hero learn-hero--subject">
+  <div class="learn-subject-icon">⚛️</div>
+  <div class="learn-subject-head">
+    <h1 class="learn-subject-title">高考物理·牛顿运动定律与动力学应用</h1>
+    <span class="syo-tag learn-status learn-status--active">进行中<span class="syo-tag-dot syo-tag-dot--blue"></span></span>
   </div>
+  <p class="learn-subject-mission">动力学是整个高中物理的承重墙。</p>
 </header>
 
 <main class="syo-container learn-main" id="learn-content">
 
-  <!-- 在做的项目：gen_home.py 用 progress.yaml 的 project.current 渲染
-       （里程碑是路线图里 `kind: 实验` 的节点，不在这张卡片里） -->
+  <!-- 在做的项目 (Notion Callout) -->
   <section class="learn-project" aria-label="在做的项目">
     <div class="learn-project__card">
   <span class="learn-project__label">在做的项目</span>
@@ -577,10 +603,10 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
 </div>
   </section>
 
+  <!-- 大纲路线图 (Notion Grouped Database) -->
   <section class="learn-section" aria-labelledby="learn-roadmap-title">
     <div class="learn-section__head">
       <h2 class="learn-section__title" id="learn-roadmap-title">大纲路线图<span class="learn-section__hint" id="learn-roadmap-meta"></span></h2>
-      <!-- 状态概览条：数值由脚本从节点 DOM 统计（生成器不必为此准备占位符） -->
       <div class="learn-overview" id="learn-overview">
         <span class="learn-overview__item learn-overview__item--todo"><span class="learn-overview__dot"></span>未开始<b id="learn-count-todo">–</b></span>
         <span class="learn-overview__item learn-overview__item--learning"><span class="learn-overview__dot"></span>学习中<b id="learn-count-learning">–</b></span>
@@ -590,104 +616,6 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
       </div>
     </div>
 
-    <!--
-      ============================================================
-      生成器渲染规范 1（gen_home.py 按此结构替换下方占位符整行）
-      ============================================================
-      · 占位符整行替换为 <div class="learn-roadmap">…层级…</div>；
-        没有大纲时替换为空字符串（空状态由页面脚本显示）。
-      · 分层：按 curriculum.yaml 的 prerequisites 算最长路径层级，第 1 层在前；
-        edges 用于校验与跨层依赖，不直接渲染。
-
-      <div class="learn-roadmap">
-        <div class="learn-level">
-          <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
-          <div class="learn-level__body">
-            <div class="learn-level__label">第 1 层 · 2 个知识点</div>
-            <div class="learn-level__grid">
-
-              <details class="learn-slot" data-id="<节点id>">
-                <summary class="learn-node learn-node--learning learn-node--expandable">
-                  <span class="learn-node__row">
-                    <span class="learn-node__dot"></span>
-                    <span class="learn-node__title">节点标题</span>
-                    <span class="learn-node__now">当前</span>
-                    <span class="learn-node__status">学习中</span>
-                    <span class="learn-node__caret" aria-hidden="true"></span>
-                  </span>
-                  <span class="learn-node__objective">节点目标（objective）</span>
-                  <span class="learn-node__foot">
-                    <span class="learn-node__prereq">前置 <span class="learn-node__chip">前置节点名</span></span>
-                    <span class="learn-node__mastery"><i style="width:NN%"></i></span>
-                    <span class="learn-node__pct">NN%</span>
-                  </span>
-                </summary>
-                <div class="learn-node__children">
-                  <a class="learn-child" href="lessons/NNNN-xxx.html">
-                    <span class="learn-child__dot" aria-hidden="true"></span>
-                    <span class="learn-child__no">NNNN</span>
-                    <span class="learn-child__title">课件标题</span>
-                  </a>
-                  （该节点有几篇课件就写几张子卡片，按编号升序）
-                </div>
-              </details>
-              </article>
-
-              没有课件的节点（不可展开）：
-
-              <article class="learn-node learn-node--todo" data-id="<节点id>" data-status="未开始" data-mastery="0">
-                <span class="learn-node__row">
-                  <span class="learn-node__dot"></span>
-                  <span class="learn-node__title">节点标题</span>
-                  <span class="learn-node__nolesson">课件待生成</span>
-                </span>
-                <span class="learn-node__objective">节点目标（objective）</span>
-                <span class="learn-node__foot">
-                  <span class="learn-node__prereq">前置 <span class="learn-node__chip">前置节点名</span></span>
-                  <span class="learn-node__mastery"><i style="width:0%"></i></span>
-                  <span class="learn-node__pct">0%</span>
-                </span>
-              </article>
-
-            </div>
-          </div>
-        </div>
-        …
-      </div>
-
-      · 状态 class 映射：未开始→--todo；学习中与初步理解→--learning；
-        能独立应用→--done；需要复习→--review；已通过项目验证→--verified
-      · 状态文本写 progress.yaml 的原值；data-status 也写原值
-      · data-id 必须写课程节点 id（展开状态按它记忆）
-      · 有课件的节点：外层用原生 <details class="learn-slot" data-id="<节点id>">
-        （无 JS 也能展开、键盘天然可达）；父卡片本身是
-        <summary class="learn-node learn-node--<状态> learn-node--expandable">，
-        父卡片不会因为展开而变大——变高的是 details 容器本身；
-        它下面（details 内容区）是 <div class="learn-node__children">，
-        里面按编号升序放该节点的全部课件，每个课件是一张子卡片：
-          <a class="learn-child" href="lessons/NNNN-xxx.html">
-            <span class="learn-child__dot" aria-hidden="true"></span>
-            <span class="learn-child__no">NNNN</span>
-            <span class="learn-child__title">课件标题</span>
-          </a>
-      · 没有课件的节点：不加 --expandable、不用 details，
-        就是一张普通 <article class="learn-node learn-node--<状态>">，
-        标题所在行加 <span class="learn-node__nolesson">课件待生成</span>，不写 caret
-      · 卡片内的元素都用 <span>（summary 的内容模型是 phrasing content，
-        不要用 <div>/<p>）；objective 与 foot 用 display:block / flex 控制版式
-      · learn-node__now 只出现在状态为“学习中”的节点上
-      · 课型徽标：curriculum.yaml 里 `kind: 实验` 的节点（里程碑验收课），在标题行 title 之后
-        加 <span class="learn-node__kind">实验</span>；`概念` 与 `实操` 不加徽标
-        （有课件时，实验课的说明页也按普通子卡片列在 learn-node__children 里）
-      · 前置标签用 prerequisites 里每个 id 对应的节点 title；
-        没有前置时写 <span class="learn-node__chip learn-node__chip--none">无</span>
-      · 掌握度：i 的 width 用 mastery × 100；没有 mastery 时按 0 处理
-      · **卡片是地图不是教案**：标题与 objective 都**最多两行**（超出省略号截断），所以两者都要给
-        `title` 属性（悬停看全文：`<span class="learn-node__title" title="全文">`）。
-        两条软上限由 gen_home.py 在 stderr 提醒（不阻断）：标题 ≤16 字、objective ≤34 字；
-        更长的说明写进 problem / practice / 过关标准——那些字段不上卡片
-      ============================================================
-    -->
     <div class="learn-roadmap">
   <div class="learn-level">
     <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
@@ -696,8 +624,10 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
       <div class="learn-level__grid">
 <details class="learn-slot" data-id="dynamics.force-analysis">
   <summary class="learn-node learn-node--learning learn-node--expandable">
-    <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="规范受力分析">规范受力分析</span><span class="learn-node__now">当前</span><span class="learn-node__status">学习中</span><span class="learn-node__caret" aria-hidden="true"></span></span>
+    <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="规范受力分析">规范受力分析</span><span class="learn-node__kind learn-node__kind--概念">概念</span><span class="learn-node__now">当前</span><span class="learn-node__status">学习中</span><span class="learn-node__caret" aria-hidden="true"></span></span>
     <span class="learn-node__objective" title="掌握隔离法与整体法，画出规范受力矢量图">掌握隔离法与整体法，画出规范受力矢量图</span>
+    <div class="learn-node__problem" title="如何准确找出物块在粗糙斜面上的所有受力并不漏力、不多力？"><span class="learn-node__problem-badge">💡 探究核心</span>如何准确找出物块在粗糙斜面上的所有受力并不漏力、不多力？</div>
+    <div class="learn-node__concepts"><span class="learn-node__concept-tag">隔离法</span><span class="learn-node__concept-tag">正压力与支持力</span><span class="learn-node__concept-tag">静摩擦与滑动摩擦</span></div>
     <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip learn-node__chip--none">无</span></span><span class="learn-node__mastery"><i style="width:50%"></i></span><span class="learn-node__pct">50%</span></span>
   </summary>
   <div class="learn-node__children">
@@ -717,8 +647,10 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
       <div class="learn-level__label">第 2 层 · 1 个知识点</div>
       <div class="learn-level__grid">
 <article class="learn-node learn-node--todo" data-id="dynamics.newton-second-law" data-status="未开始" data-mastery="0">
-  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="牛顿第二定律">牛顿第二定律</span><span class="learn-node__kind">模型</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="牛顿第二定律">牛顿第二定律</span><span class="learn-node__kind learn-node__kind--模型">模型</span><span class="learn-node__nolesson">课件待生成</span></span>
   <span class="learn-node__objective" title="掌握矢量性与瞬时性，熟练运用正交分解列方程">掌握矢量性与瞬时性，熟练运用正交分解列方程</span>
+  <div class="learn-node__problem" title="当合外力突变时，速度和加速度如何瞬间响应？"><span class="learn-node__problem-badge">💡 探究核心</span>当合外力突变时，速度和加速度如何瞬间响应？</div>
+  <div class="learn-node__concepts"><span class="learn-node__concept-tag">瞬时加速度</span><span class="learn-node__concept-tag">弹簧与轻绳模型</span><span class="learn-node__concept-tag">正交分解法</span></div>
   <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">规范受力分析</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
 </article>
       </div>
@@ -730,83 +662,50 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
       <div class="learn-level__label">第 3 层 · 2 个知识点</div>
       <div class="learn-level__grid">
 <article class="learn-node learn-node--todo" data-id="dynamics.inclined-plane-slider" data-status="未开始" data-mastery="0">
-  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="斜面滑块母题">斜面滑块母题</span><span class="learn-node__kind">母题</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="斜面滑块母题">斜面滑块母题</span><span class="learn-node__kind learn-node__kind--母题">母题</span><span class="learn-node__nolesson">课件待生成</span></span>
   <span class="learn-node__objective" title="攻克动力学两类基本问题与临界滑动极值">攻克动力学两类基本问题与临界滑动极值</span>
+  <div class="learn-node__problem" title="倾角改变或外力渐变时，静摩擦与滑动摩擦如何转换？"><span class="learn-node__problem-badge">💡 探究核心</span>倾角改变或外力渐变时，静摩擦与滑动摩擦如何转换？</div>
+  <div class="learn-node__concepts"><span class="learn-node__concept-tag">动力学两类基本问题</span><span class="learn-node__concept-tag">临界角tanθ=μ</span><span class="learn-node__concept-tag">传送带模型</span></div>
   <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">牛顿第二定律</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
 </article>
 <article class="learn-node learn-node--todo" data-id="dynamics.experiment-atwood" data-status="未开始" data-mastery="0">
-  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="探究加速度实验">探究加速度实验</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="探究加速度实验">探究加速度实验</span><span class="learn-node__kind learn-node__kind--实验">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
   <span class="learn-node__objective" title="掌握控制变量法与平衡摩擦力、消除系统误差">掌握控制变量法与平衡摩擦力、消除系统误差</span>
+  <div class="learn-node__problem" title="为什么小车总质量必须远大于砂桶总质量？"><span class="learn-node__problem-badge">💡 探究核心</span>为什么小车总质量必须远大于砂桶总质量？</div>
+  <div class="learn-node__concepts"><span class="learn-node__concept-tag">控制变量法</span><span class="learn-node__concept-tag">平衡摩擦力</span><span class="learn-node__concept-tag">逐差法求加速度</span></div>
   <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">牛顿第二定律</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
 </article>
       </div>
     </div>
   </div>
 </div>
-
-    <p class="learn-roadmap__empty" id="learn-roadmap-empty" hidden>这门课还没有大纲。回到会话里让 agent 生成课程吧。</p>
+    <p class="learn-empty" id="learn-roadmap-empty" hidden>还没有录入考点路线图。</p>
   </section>
 
+  <!-- 附件与速查 (Notion Files & Media) -->
   <section class="learn-section" aria-labelledby="learn-attachments-title">
     <div class="learn-section__head">
-      <h2 class="learn-section__title" id="learn-attachments-title">附件<span class="learn-section__hint" id="learn-attachments-hint">拖动列表可惯性滚动</span></h2>
+      <h2 class="learn-section__title" id="learn-attachments-title">附件速查<span class="learn-section__hint" id="learn-attachments-hint">速查文档、术语表与学习记录</span></h2>
     </div>
 
-    <!-- 纵向惯性滚动容器：Sayo 的 data-syo-inertia 自动初始化（.learn-attachments 覆盖成竖排）。
-         tabindex + role + aria-label 让键盘也能滚动，并且读屏能知道这是个可滚区域 -->
-    <div class="syo-inertia learn-attachments" data-syo-inertia
-         tabindex="0" role="region" aria-label="附件列表，可用方向键或拖动滚动">
-
-      <!--
-        ============================================================
-        生成器渲染规范 2
-        ============================================================
-        · 占位符整行替换为全部附件分组（容器、滚动行为与底部提示条由模板提供，生成器只出分组内容，
-          不要动容器上的 tabindex/role/aria-label，也不要删掉末尾的 .learn-attachments__more 提示条）；
-          一个附件都没有时替换为：
-          <p class="learn-attachments__empty">还没有附件。速查文档、术语表、学习记录都会出现在这里。</p>
-        · 分组顺序固定，空分组整组省略：
-
-        <div class="learn-attachments__group">
-          <div class="learn-attachments__label">参考文档</div>
-          <a class="learn-attachment" href="reference/http-status.html">
-            <span class="learn-attachment__title">HTTP 状态码速查</span>
-            <span class="learn-attachment__meta">reference/</span>
-          </a>
-        </div>
-
-        · 分组与数据源：
-          参考文档   ← reference/*.html（标题取页面标题或文件名，meta 写所在目录）
-          术语与资源 ← GLOSSARY.md（标题写“术语表”）、RESOURCES.md（标题写“资源清单”）
-          学习记录   ← learning-records/*.md（按编号升序）
-          会话摘要   ← sessions/*.md（按日期倒序，最新的在前）
-        · meta 写相对科目目录的路径（如 reference/ 或 learning-records/0012-xxx.md）
-        ============================================================
-      -->
+    <div class="learn-attachments" tabindex="0" role="region" aria-label="附件列表">
       <p class="learn-attachments__empty">还没有附件。速查文档、术语表、学习记录都会出现在这里。</p>
-
-      <!-- 吸底提示条：内容超出一屏时出现，滚到底自动隐藏（脚本切换 class） -->
       <p class="learn-attachments__more" aria-hidden="true">向下滚动查看更多 ↓</p>
-
     </div>
   </section>
 
 </main>
 
-<footer class="learn-footer syo-container">StudyMate · 本地学习工作区</footer>
+<footer class="learn-footer syo-container">StudyMate-HighSchool · 本地学习工作区</footer>
 
 <script src="../../assets/sayo/sayo.js"></script>
 <script>
 (function () {
   'use strict';
 
-  var root = document.documentElement;
-  var OPEN_KEY = 'le-open-nodes';
-
-  /* ---------- 主题开关（主题本身已在 <head> 里应用） ---------- */
   LearnTheme.wire(document.getElementById('learn-theme-checkbox'));
 
-  /* ---------- 状态概览条 + 区块计数：从节点 DOM 统计 ---------- */
+  /* 状态概览条 */
   var nodes = Array.prototype.slice.call(document.querySelectorAll('.learn-node'));
   var overviewEl = document.getElementById('learn-overview');
   var roadmapMetaEl = document.getElementById('learn-roadmap-meta');
@@ -833,10 +732,8 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
     }
   }
 
-  /* ---------- 节点卡展开状态记忆 ----------
-     展开/收起本身是原生 <details>（无 JS 也能用、键盘可达），
-     这里只负责把展开过的节点 id 记在 localStorage，下次打开保持原样。 */
-  var OPEN_KEY = 'le-open-nodes';
+  /* 节点展开记忆 */
+  var OPEN_KEY = 'sm-open-nodes';
   var openSet = {};
   try {
     (JSON.parse(localStorage.getItem(OPEN_KEY) || '[]') || []).forEach(function (id) { openSet[id] = true; });
@@ -859,7 +756,7 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
     });
   });
 
-  /* ---------- 附件区：计数、空状态与"可滚动"提示 ---------- */
+  /* 附件提示 */
   var attachHintEl = document.getElementById('learn-attachments-hint');
   var attachBox = document.querySelector('.learn-attachments');
   var attachCount = document.querySelectorAll('.learn-attachment').length;
@@ -870,45 +767,10 @@ summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline
       if (attachEmpty) attachEmpty.hidden = false;
       attachHintEl.textContent = '还没有附件';
     } else {
-      attachHintEl.textContent = attachCount + ' 项 · 可拖动或滚动查看';
+      attachHintEl.textContent = attachCount + ' 项速查文档';
     }
   }
 
-  /* 在链接上按下拖动 = 滚动，不是拖链接、也不是点击跳转。
-     容器的 mousedown 已经能启动 Sayo 的惯性（事件会从链接冒泡上来），
-     但浏览器默认还会做两件事，必须压掉：
-       · 原生链接拖拽（幽灵图会把后续 mousemove 抢走）→ dragstart preventDefault
-       · 松手时把这次拖拽当成一次 click → 位移超过阈值就吞掉这次 click
-     原地点击（位移 < 5px）与键盘回车不受影响，照常打开链接。 */
-  if (attachBox) {
-    attachBox.addEventListener('dragstart', function (event) { event.preventDefault(); });
-
-    var pressX = 0, pressY = 0, pressed = false;
-
-    attachBox.addEventListener('mousedown', function (event) {
-      pressed = true;
-      pressX = event.clientX;
-      pressY = event.clientY;
-    });
-    attachBox.addEventListener('touchstart', function (event) {
-      if (!event.touches || !event.touches.length) return;
-      pressed = true;
-      pressX = event.touches[0].clientX;
-      pressY = event.touches[0].clientY;
-    }, { passive: true });
-
-    /* 捕获阶段拦，先于链接的默认跳转 */
-    attachBox.addEventListener('click', function (event) {
-      if (!pressed) return;          // 键盘回车等：clientX/Y 为 0，不拦
-      pressed = false;
-      if (Math.abs(event.clientX - pressX) > 5 || Math.abs(event.clientY - pressY) > 5) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    }, true);
-  }
-
-  /* 内容不足一屏 → 隐藏提示条（is-short）；滚到底 → 隐藏（is-end） */
   if (attachBox) {
     var syncAttachHint = function () {
       var overflow = attachBox.scrollHeight - attachBox.clientHeight;

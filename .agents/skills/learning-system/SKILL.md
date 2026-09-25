@@ -31,8 +31,8 @@ argument-hint: "你想学哪个科目或考点？例如：高中物理动力学�
      `image-scout` 点名的站点不够用时，**再给一批"额外允许站点"**（如 Wikimedia Commons、对应语言的维基条目、官方教程的示例画廊）。**图片库为空不阻塞**：抓不到图只记 `Gaps`，大纲与课件照常产出。后续节点若需要新图，再按需派一次 `image-scout`（补图）
    4. 派 `curriculum-designer` 产大纲（值：`subject_path` + 盘问结果摘要 + `RESOURCES.md` 路径）
    5. 建 `progress.yaml`：`nodes: {}`（**只写有变化的节点**，没写的按大纲初始值算）、`misconceptions: []`，`project` 只写 `current`；过 `schemas/progress.schema.json`
-   6. 刷新主页
-5. **报告 + 给下一步（不许只报告就停）**：报上次学到哪、这次建议学什么（依据薄弱点与实验课进度）；新科目还要报清"几个节点／几个实验课／第一课叫什么／什么课型"。然后按「对话节奏」给下一步并问"开始吗"。开场顺带打开根主页（`<LEARN_WORKSPACE>/index.html`），**并把绝对路径写在回复里**（`present` 呈上更好——点得开才算给到）
+   6. **同步并刷新现代化伴学端**：跑 `npm run sync`（即 `py -3 scripts/sync_to_vitepress.py`）。脚本会自动读取 `curriculum.yaml` 的全量节点与学情，导出 `curriculum-data.json` 并生成考纲大纲页。VitePress 本地服务（`http://localhost:5173/`）毫秒级热更新，永久保留所有新建节点的卡片样式与大纲拓扑！
+5. **报告 + 给下一步（不许只报告就停）**：报上次学到哪、这次建议学什么（依据薄弱点与实验课进度）；新科目还要报清"几个节点／几个实验课／第一课叫什么／什么课型"。然后按「对话节奏」给下一步并问"开始吗"。提示学生直接在浏览器查看 `http://localhost:5173/` 实时交互端。
 
 ## 新科目盘问（你亲自执行）
 

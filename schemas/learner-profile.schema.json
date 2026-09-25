@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LearnerProfile",
+  "description": "高中学霸自学系统：学生自适应学情画像档案",
+  "type": "object",
+  "required": ["student_name", "grade", "exam_region", "target_score_band", "learning_style"],
+  "properties": {
+    "student_name": {
+      "type": "string",
+      "description": "学生昵称或姓名"
+    },
+    "grade": {
+      "type": "string",
+      "enum": ["高一", "高二", "高三一轮", "高三冲刺", "高考复读"],
+      "description": "当前学段"
+    },
+    "exam_region": {
+      "type": "string",
+      "description": "高考考区省份与卷种，例如：新高考全国I卷、新高考全国II卷、全国甲卷、北京卷、上海卷、浙江卷"
+    },
+    "target_score_band": {
+      "type": "string",
+      "enum": ["打通基础(45-60分)", "攻克中档(60-75分)", "冲刺优异(75-88分)", "压轴满分(88-100分)"],
+      "description": "目标单科分数档位"
+    },
+    "learning_style": {
+      "type": "string",
+      "enum": ["直观图景型", "严密推导型", "综合平衡型"],
+      "description": "认知风格偏好：直观图景型注重实验与SVG受力图；严密推导型注重公式推导与微元极限思想"
+    },
+    "priorities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "当前优先攻坚模块，如：斜面连接体、传送带模型、动量守恒、电磁感应"
+    },
+    "weakness_tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "高频薄弱标签云，如：审题漏条件、正压力混淆、弹簧突变算错"
+    }
+  }
+}

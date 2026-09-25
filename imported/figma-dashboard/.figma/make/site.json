@@ -1,0 +1,10 @@
+{
+  "description": "Designed for Chinese high school students, this app offers an AI-powered study dashboard that tracks exam progress, reviews mistakes, and organizes learning efficiently.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
